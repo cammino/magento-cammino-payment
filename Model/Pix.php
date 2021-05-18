@@ -1,5 +1,5 @@
 <?php
-class Cammino_Pixpayment_Model_Pix extends Cammino_Pixpayment_Model_Abstract
+class Cammino_Payment_Model_Pix extends Cammino_Payment_Model_Abstract
 {
     protected $_code = 'cammino_payment_pix';
     protected $_formBlockType = 'cammino_payment/form_pix';
