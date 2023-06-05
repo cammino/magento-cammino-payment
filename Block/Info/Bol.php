@@ -1,5 +1,5 @@
 <?php
-class Cammino_Payment_Block_Info_Bol extends Cammino_Payment_Block_Info
+class Cammino_Payment_Block_Info_Bol extends Mage_Payment_Block_Info
 {
     protected function _construct()
     {

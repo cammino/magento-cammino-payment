@@ -2,60 +2,84 @@
 <config>
     <modules>
         <Cammino_Payment>
-            <version>0.0.1</version>
+            <version>0.1.0</version>
             <depends>
-				<Mage_Payment />
-			</depends>
+                <Mage_Payment />
+            </depends>
         </Cammino_Payment>
     </modules>
     <global>
-    	 <models>
-        	<cammino_payment>
-        		<class>Cammino_Payment_Model</class>
-        	</cammino_payment>
+        <models>
+            <cammino_payment>
+                <class>Cammino_Payment_Model</class>
+            </cammino_payment>
         </models>
-    	<helpers>
+        <blocks>
+            <cammino_payment>
+                <class>Cammino_Payment_Block</class>
+            </cammino_payment>
+        </blocks>
+        <helpers>
             <cammino_payment>
                 <class>Cammino_Payment_Helper</class>
             </cammino_payment>
         </helpers>
-       <blocks>
-       		<cammino_payment>
-       			<class>Cammino_Payment_Block</class>
-       		</cammino_payment>
-       </blocks>
+        <resources>
+            <camminopayment_setup>
+                <setup>
+                    <module>Cammino_Payment</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </camminopayment_setup>
+        </resources>
+        <events>
+            <admin_system_config_section_save_after>
+                <observers>
+                    <payment_observer>
+                        <type>singleton</type>
+                        <class>Cammino_Payment_Model_Observer</class>
+                        <method>updateSettings</method>
+                    </payment_observer>
+                </observers>
+            </admin_system_config_section_save_after>
+        </events>
     </global>
-	<frontend>
-		<routers>
-			<cammino_payment>
-				<use>standard</use>
-				<args>
-					<module>Cammino_Payment</module>
-					<frontName>camminopayment</frontName>
-				</args>
-			</cammino_payment>
-		</routers>
-	</frontend>
+    <frontend>
+        <routers>
+            <cammino_payment>
+                <use>standard</use>
+                <args>
+                    <module>Cammino_Payment</module>
+                    <frontName>camminopayment</frontName>
+                </args>
+            </cammino_payment>
+        </routers>
+    </frontend>
     <default>
         <payment>
-            <cammino_payment_bol>
-                <active>1</active>
-                <model>Cammino_Payment_Model_Bol</model>
-                <order_status>processing</order_status>
-                <title>Cammino Payment - Boleto</title>
-            </cammino_payment_bol>
             <cammino_payment_cc>
-                <active>1</active>
                 <model>Cammino_Payment_Model_Cc</model>
-                <order_status>processing</order_status>
+                <active>1</active>
+                <order_status>pending</order_status>
+                <payment_action>order</payment_action>
                 <title>Cammino Payment - Cartão de Crédito</title>
             </cammino_payment_cc>
-            <cammino_payment_pix>
+            <cammino_payment_bol>
+                <model>Cammino_Payment_Model_Bol</model>
                 <active>1</active>
+                <order_status>pending</order_status>
+                <payment_action>order</payment_action>
+                <title>Cammino Payment - Boleto</title>
+            </cammino_payment_bol>
+            <cammino_payment_pix>
                 <model>Cammino_Payment_Model_Pix</model>
-                <order_status>processing</order_status>
+                <active>1</active>
+                <order_status>pending</order_status>
+                <payment_action>order</payment_action>
                 <title>Cammino Payment - Pix</title>
             </cammino_payment_pix>
-         </payment>
+        </payment>
     </default>
 </config>

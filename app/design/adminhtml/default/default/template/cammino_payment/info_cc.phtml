@@ -1,5 +1,10 @@
 <h2><?php echo $this->escapeHtml($this->__($this->getMethod()->getTitle())) ?></h2>
 
 <p>
+    ID da transação: <br>
+    <?php echo $this->getInfo()->getCamminoPaymentTransactionId(); ?>
+</p>
+
+<p>
     Parcelamento: <br>
     <?php echo $this->getInfo()->getInstallments(); ?>

@@ -1,0 +1,16 @@
+<h2><?php echo $this->escapeHtml($this->__($this->getMethod()->getTitle())) ?></h2>
+
+<p>
+    <a target="_blank" href="<?php echo $this->getInfo()->getCamminoPaymentUrl(); ?>">Link para o boleto</a>
+    <br>
+    <a target="_blank" href="<?php echo $this->getInfo()->getCamminoPaymentUrl(); ?>"><?php echo $this->getInfo()->getCamminoPaymentUrl(); ?></a>
+</p>
+
+<p>
+    Linha digitável: <br><?php echo $this->getInfo()->getCamminoPaymentDigitableLine(); ?>
+</p>
+
+<p>
+    ID da transação: <br>
+    <?php echo $this->getInfo()->getCamminoPaymentTransactionId(); ?>
+</p>

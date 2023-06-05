@@ -1,0 +1,89 @@
+<p><?php echo $this->getMethod()->getTitle(); ?></p><br>
+
+<?php
+    $payment = $this->getInfo()->getOrder()->getPayment();
+
+    $order = Mage::getModel('sales/order')->load($this->getInfo()->getOrder()->getId());
+
+    $qrCodeImage = $payment->getCamminoPaymentUrl();
+    $brCode = $payment->getCamminoPaymentDigitableLine();
+
+    if ($payment->getMethod() === 'cammino_payment_pix') {
+        ?>
+        <style>
+            .flex-column-center {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .openpix-copy-button {
+                border: unset;
+                display: inline-block;
+                padding: 0.25em 0.4em;
+                font-size: 75%;
+                font-weight: 700;
+                line-height: 1;
+                text-align: center;
+                white-space: nowrap;
+                vertical-align: baseline;
+                border-radius: 0.25rem;
+                transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+                border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                color: #fff;
+                background-color: #17a2b8;
+                text-transform: uppercase;
+                margin-bottom: 10px;
+            }
+
+            .openpix-textarea-container {
+                background-color: #e2e3e5;
+                border: 1px solid #dee2e6 !important;
+                padding: 0.75rem 1.25rem;
+                margin-bottom: 1rem;
+                border-radius: 0.25rem;
+            }
+
+            .openpix-copy-textarea {
+                color: #333;
+                width: 100%;
+                background: 0 0;
+                border: none;
+                overflow: hidden;
+                pointer-events: none;
+            }
+        </style>
+        <div class="flex-column-center">
+            <img
+                    class="openpix-qrcode-image"
+                    style="width: 200px; float: unset;"
+                    title="QRCode Pix deste pedido."
+                    src="<?php echo $qrCodeImage; ?>"
+                    width="200px"
+            />
+            
+        <textarea id="emv" readonly="" rows="3" class="yapay_qrcode" style="line-break: anywhere;background-color: rgb(226, 227, 229);width: 184px;padding: 10px;height: 83px;"><?php echo $brCode; ?></textarea>
+        <br>
+        <button class="copy_yapay_qrcode" id="btnCopyEmv" class="openpix-copy-button" onclick="copyEmv()" style="background: #999;display: inline-block;padding: 7px 15px;border: 0;color: #FFFFFF;font-size: 13px;font-weight: normal;line-height: 19px;text-align: center;vertical-align: middle;white-space: nowrap;outline: none;">Copiar</button></div>
+
+        </div>
+        <script>
+            function copyEmv() {
+                const textAreaEmv = document.querySelector('#emv');
+
+                textAreaEmv.select();
+                textAreaEmv.setSelectionRange(0, 99999);
+                document.execCommand('copy');
+
+                const originalText = btnCopyEmv.innerHTML;
+                btnCopyEmv.innerHTML = 'Copiado!';
+
+                setTimeout(function () {
+                    btnCopyEmv.innerHTML = originalText;
+                }, 10 * 1000);
+            }
+        </script>
+        <?php
+    }
+?>

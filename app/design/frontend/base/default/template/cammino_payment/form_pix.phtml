@@ -1,18 +1,9 @@
 <?php $_code = $this->getMethodCode(); ?>
-<ul class="form-list">
-    <li class="pix on">
-        <span><?php echo $this->__('Pix') ?></span>
-    </li>
-</ul>
 <ul class="form-list" id="payment_form_<?php echo $this->getMethodCode() ?>" style="display:none;">
-    <li>
-        <div class="<?php echo $this->getMethodCode() ?>-instructions-content">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-            proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    <li id="<?php echo $_code ?>_cpf_div">
+        <label for="<?php echo $_code ?>_cpf" class="required"><em>*</em>CPF</label>
+        <div class="input-box">
+            <input type="text" id="<?php echo $_code ?>_cpf" name="payment[<?php echo $_code ?>_cpf]" title="<?php echo $this->__('CPF') ?>" class="input-text required-entry validate-digits" value="" />
         </div>
     </li>
 </ul>
