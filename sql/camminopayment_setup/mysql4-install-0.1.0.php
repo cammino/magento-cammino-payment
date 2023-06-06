@@ -3,12 +3,35 @@
 $installer = $this;
 $installer->startSetup();
 
-
-$installer->run("
-        ALTER TABLE `{$installer->getTable('sales/quote_payment')}` 
-        ADD `cammino_payment_transaction_id` VARCHAR(255) DEFAULT NULL,
-        ADD `cammino_payment_url` VARCHAR(255) DEFAULT NULL,
-        ADD `cammino_payment_digitable_line` VARCHAR(255) DEFAULT NULL,
-    ");
+$installer->getConnection()->addColumn(
+    $installer->getTable('sales_flat_order_payment'),
+    'cammino_payment_transaction_id',
+    array(
+        'type' => Varien_Db_Ddl_Table::TYPE_TEXT,
+        'nullable' => true,
+        'length' => 255,
+        'comment' => 'Cammino Payment Transaction ID'
+    )
+);
+$installer->getConnection()->addColumn(
+    $installer->getTable('sales_flat_order_payment'),
+    'cammino_payment_url',
+    array(
+        'type' => Varien_Db_Ddl_Table::TYPE_TEXT,
+        'nullable' => true,
+        'length' => 255,
+        'comment' => 'Cammino Payment URL'
+    )
+);
+$installer->getConnection()->addColumn(
+    $installer->getTable('sales_flat_order_payment'),
+    'cammino_payment_digitable_line',
+    array(
+        'type' => Varien_Db_Ddl_Table::TYPE_TEXT,
+        'nullable' => true,
+        'length' => 255,
+        'comment' => 'Cammino Payment Digitable Line'
+    )
+);
 
 $installer->endSetup();

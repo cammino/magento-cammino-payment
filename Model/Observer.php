@@ -48,8 +48,7 @@ class Cammino_Payment_Model_Observer
 
         $jsonBody = json_encode($request);
 
-        $url = 'http://localhost:3000/settings';
-        $urlProd = 'https://payment.cammino.digital/settings';
+        $url = 'https://payment.cammino.digital/settings';
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonBody);
