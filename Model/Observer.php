@@ -55,13 +55,14 @@ class Cammino_Payment_Model_Observer
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',
-            'Content-Length: ' . strlen($jsonBody)
+            'Content-Length: ' . strlen($jsonBody),
+            'apikey: ' . Mage::getStoreConfig("payment/cammino_payment_config/api_key")
         ));
         $response = curl_exec($curl);
         $responseArray = json_decode($response, true);
         curl_close($curl);
 
-        Mage::log('Payment config API response: ' . $responseArray, null, 'payment.log');
+        Mage::log('Payment config API response: ' . $response, null, 'payment.log');
         Mage::log('Store ID: ' . $responseArray['store_id'], null, 'payment.log');
         Mage::getModel('core/config')->saveConfig('payment/cammino_payment_config/store_id', $responseArray['store_id']);
 

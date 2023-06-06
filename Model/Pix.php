@@ -122,7 +122,8 @@ class Cammino_Payment_Model_Pix extends Mage_Payment_Model_Method_Abstract
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($curl, CURLOPT_HTTPHEADER, array(
                 'Content-Type: application/json',
-                'Content-Length: ' . strlen($jsonBody)
+                'Content-Length: ' . strlen($jsonBody),
+                'apikey: ' . Mage::getStoreConfig("payment/cammino_payment_config/api_key")
             ));
             $response = curl_exec($curl);
             $responseArray = json_decode($response, true);
