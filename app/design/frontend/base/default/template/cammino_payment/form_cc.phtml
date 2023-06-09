@@ -58,10 +58,7 @@
     <li id="<?php echo $_code ?>_cpf_div">
         <label for="<?php echo $_code ?>_cpf" class="required"><em>*</em>CPF</label>
         <div class="input-box">
-            <input type="text" id="<?php echo $_code ?>_cpf" name="payment[<?php echo $_code ?>_cpf]" title="<?php echo $this->__('CPF') ?>" class="input-text required-entry validate-digits validate-taxvat" value=""
-            maxlength="14"
-            placeholder="___.___.___-__"
-            autocomplete="off"/>
+            <input type="text" id="<?php echo $_code ?>_cpf" name="payment[<?php echo $_code ?>_cpf]" title="<?php echo $this->__('CPF') ?>" class="input-text required-entry validate-digits validate-taxvat" value="" maxlength="14" placeholder="___.___.___-__" autocomplete="off" />
         </div>
     </li>
 
@@ -197,27 +194,27 @@
 
     });
 
-    jQuery('#cammino_payment_cc_cc_owner').blur(function () {
+    jQuery('#cammino_payment_cc_cc_owner').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
     });
-    jQuery('#cammino_payment_cc_cc_number').blur(function () {
+    jQuery('#cammino_payment_cc_cc_number').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
     });
-    jQuery('#cammino_payment_cc_expiration').blur(function () {
+    jQuery('#cammino_payment_cc_expiration').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
     });
-    jQuery('#cammino_payment_cc_expiration_yr').blur(function () {
+    jQuery('#cammino_payment_cc_expiration_yr').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
     });
-    jQuery('#cammino_payment_cc_cc_cid').blur(function () {
+    jQuery('#cammino_payment_cc_cc_cid').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
     });
-    jQuery('#cammino_payment_cc_cpf').blur(function () {
+    jQuery('#cammino_payment_cc_cpf').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
     });
@@ -267,25 +264,25 @@
             return false;
         }
         data = {
-          nomeDoCliente: jQuery('#cammino_payment_cc_cc_owner').val() ? jQuery('#cammino_payment_cc_cc_owner').val() : null,
-          documento: jQuery('#cammino_payment_cc_cpf').val() ? jQuery('#cammino_payment_cc_cpf').val().replace(/[^A-Z0-9]+/ig, "") : null,
-          email: null,
-          celular: null,
-          contato: null,
-          valor: null,
-          number: jQuery('#cammino_payment_cc_cc_number').val() ? jQuery('#cammino_payment_cc_cc_number').val().replace(/[^A-Z0-9]+/ig, "") : null,
-          expirationMonth: jQuery('#cammino_payment_cc_expiration').val() ? jQuery('#cammino_payment_cc_expiration').val() : null,
-          expirationYear: jQuery('#cammino_payment_cc_expiration_yr').val() ? jQuery('#cammino_payment_cc_expiration_yr').val() : null,
-          cvv: jQuery('#cammino_payment_cc_cc_cid').val() ? jQuery('#cammino_payment_cc_cc_cid').val() : null,
-          holderName: jQuery('#cammino_payment_cc_cc_owner').val() ? jQuery('#cammino_payment_cc_cc_owner').val() : null,
-          quantidadeVezesRecorrencia: null,
-          bandeira: null,
-          dataCobrancaRecorrente: null
+            nomeDoCliente: jQuery('#cammino_payment_cc_cc_owner').val() ? jQuery('#cammino_payment_cc_cc_owner').val() : null,
+            documento: jQuery('#cammino_payment_cc_cpf').val() ? jQuery('#cammino_payment_cc_cpf').val().replace(/[^A-Z0-9]+/ig, "") : null,
+            email: null,
+            celular: null,
+            contato: null,
+            valor: null,
+            number: jQuery('#cammino_payment_cc_cc_number').val() ? jQuery('#cammino_payment_cc_cc_number').val().replace(/[^A-Z0-9]+/ig, "") : null,
+            expirationMonth: jQuery('#cammino_payment_cc_expiration').val() ? jQuery('#cammino_payment_cc_expiration').val() : null,
+            expirationYear: jQuery('#cammino_payment_cc_expiration_yr').val() ? jQuery('#cammino_payment_cc_expiration_yr').val() : null,
+            cvv: jQuery('#cammino_payment_cc_cc_cid').val() ? jQuery('#cammino_payment_cc_cc_cid').val() : null,
+            holderName: jQuery('#cammino_payment_cc_cc_owner').val() ? jQuery('#cammino_payment_cc_cc_owner').val() : null,
+            quantidadeVezesRecorrencia: null,
+            bandeira: getCreditCardLabel(jQuery('#cammino_payment_cc_cc_number').val().replace(/ /g,'')),
+            dataCobrancaRecorrente: null
         }
-        if ((data.card.number == null) || (data.card.cvv == null) || (data.card.expirationMonth == null) || (data.card.expirationYear == null)) {
+        if ((data.number == null) || (data.cvv == null) || (data.expirationMonth == null) || (data.expirationYear == null)) {
             return false;
         }
-        if (data.card.number != null) {
+        if (data.number != null) {
             jQuery.support.cors = true;
             jQuery.ajax({
                 url: 'https://api-homolog.credpay.com.br/Tokenizacao/CriarToken',
@@ -296,8 +293,6 @@
                 crossDomain: true,
                 data: data,
                 success: function(response) {
-                    console.log(response);
-                    console.log(response.retorno.token);
                     obj.ccToken = response.retorno.token;
                 }
             });
@@ -306,5 +301,33 @@
         }
         jQuery('#cammino_payment_cc_zaaz_card_hash').val(obj.ccToken);
 
+    }
+
+    function getCreditCardLabel(cardNumber) {
+        var regexVisa = /^4[0-9]{12}(?:[0-9]{3})?/;
+        var regexMaster = /^5[1-5][0-9]{14}/;
+        var regexAmex = /^3[47][0-9]{13}/;
+        var regexDiners = /^3(?:0[0-5]|[68][0-9])[0-9]{11}/;
+        var regexDiscover = /^6(?:011|5[0-9]{2})[0-9]{12}/;
+        var regexJCB = /^(?:2131|1800|35\d{3})\d{11}/;
+        if (regexVisa.test(cardNumber)) {
+            return 'visa';
+        }
+        if (regexMaster.test(cardNumber)) {
+            return 'master';
+        }
+        if (regexAmex.test(cardNumber)) {
+            return 'amex';
+        }
+        if (regexDiners.test(cardNumber)) {
+            return 'diners';
+        }
+        if (regexDiscover.test(cardNumber)) {
+            return 'discover';
+        }
+        if (regexJCB.test(cardNumber)) {
+            return 'jcb';
+        }
+        return '';
     }
 </script>
