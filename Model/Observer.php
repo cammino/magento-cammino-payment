@@ -27,6 +27,12 @@ class Cammino_Payment_Model_Observer
                 'mode' => Mage::getStoreConfig("payment/cammino_payment_pagarme/mode")
             ];
         }
+        if (Mage::getStoreConfig("payment/cammino_payment_zaaz/active")) {
+            $request['zaaz'] = [
+                'loja_id' => Mage::getStoreConfig("payment/cammino_payment_zaaz/loja_id"),
+                'mode' => Mage::getStoreConfig("payment/cammino_payment_zaaz/mode")
+            ];
+        }
         if (Mage::getStoreConfig("payment/cammino_payment_pix/active")) {
             $request['pix'] = [
                 'key' => Mage::getStoreConfig("payment/cammino_payment_pix/pix_key")
