@@ -4,6 +4,7 @@
 
         <!-- card hashes and tokens !-->
         <input type="hidden" id="<?php echo $_code ?>_pagarme_card_hash" name="payment[<?php echo $_code ?>_pagarme_card_hash]" value="" />
+        <input type="hidden" id="<?php echo $_code ?>_zaaz_card_hash" name="payment[<?php echo $_code ?>_zaaz_card_hash]" value="" />
 
         <select id="<?php echo $_code ?>_cc_type" title="<?php echo $this->__('Credit Card Type') ?>" style="display: none;">
             <option value=""><?php echo $this->__('--Please Select--') ?></option>
@@ -198,27 +199,32 @@
 
     jQuery('#cammino_payment_cc_cc_owner').blur(function () {
         updatePagarmeToken();
+        updateZaazToken();
     });
     jQuery('#cammino_payment_cc_cc_number').blur(function () {
         updatePagarmeToken();
+        updateZaazToken();
     });
     jQuery('#cammino_payment_cc_expiration').blur(function () {
         updatePagarmeToken();
+        updateZaazToken();
     });
     jQuery('#cammino_payment_cc_expiration_yr').blur(function () {
         updatePagarmeToken();
+        updateZaazToken();
     });
     jQuery('#cammino_payment_cc_cc_cid').blur(function () {
         updatePagarmeToken();
+        updateZaazToken();
     });
     jQuery('#cammino_payment_cc_cpf').blur(function () {
         updatePagarmeToken();
+        updateZaazToken();
     });
 
     updatePagarmeToken = function() {
-        console.log('passando');
         var obj = this;
-        if (!'<?php echo Mage::getStoreConfig("payment/cammino_payment_config/active"); ?>') {
+        if (!'<?php echo Mage::getStoreConfig("payment/cammino_payment_pagarme/active"); ?>') {
             return false;
         }
         var data = {
@@ -231,6 +237,9 @@
                 cvv: jQuery('#cammino_payment_cc_cc_cid').val() ? jQuery('#cammino_payment_cc_cc_cid').val() : null,
                 holder_document: jQuery('#cammino_payment_cc_cpf').val() ? jQuery('#cammino_payment_cc_cpf').val().replace(/[^A-Z0-9]+/ig, "") : null
             }
+        }
+        if ((data.card.number == null) || (data.card.cvv == null) || (data.card.exp_month == null) || (data.card.exp_year == null)) {
+            return false;
         }
         if (data.card.number != null) {
             jQuery.support.cors = true;
@@ -249,7 +258,53 @@
         } else {
             obj.ccToken = false;
         }
-        console.log(obj.ccToken);
         jQuery('#cammino_payment_cc_pagarme_card_hash').val(obj.ccToken);
+    }
+
+    updateZaazToken = function() {
+        var obj = this;
+        if (!'<?php echo Mage::getStoreConfig("payment/cammino_payment_zaaz/active"); ?>') {
+            return false;
+        }
+        data = {
+          nomeDoCliente: jQuery('#cammino_payment_cc_cc_owner').val() ? jQuery('#cammino_payment_cc_cc_owner').val() : null,
+          documento: jQuery('#cammino_payment_cc_cpf').val() ? jQuery('#cammino_payment_cc_cpf').val().replace(/[^A-Z0-9]+/ig, "") : null,
+          email: null,
+          celular: null,
+          contato: null,
+          valor: null,
+          number: jQuery('#cammino_payment_cc_cc_number').val() ? jQuery('#cammino_payment_cc_cc_number').val().replace(/[^A-Z0-9]+/ig, "") : null,
+          expirationMonth: jQuery('#cammino_payment_cc_expiration').val() ? jQuery('#cammino_payment_cc_expiration').val() : null,
+          expirationYear: jQuery('#cammino_payment_cc_expiration_yr').val() ? jQuery('#cammino_payment_cc_expiration_yr').val() : null,
+          cvv: jQuery('#cammino_payment_cc_cc_cid').val() ? jQuery('#cammino_payment_cc_cc_cid').val() : null,
+          holderName: jQuery('#cammino_payment_cc_cc_owner').val() ? jQuery('#cammino_payment_cc_cc_owner').val() : null,
+          quantidadeVezesRecorrencia: null,
+          bandeira: null,
+          dataCobrancaRecorrente: null
+        }
+        if ((data.card.number == null) || (data.card.cvv == null) || (data.card.expirationMonth == null) || (data.card.expirationYear == null)) {
+            return false;
+        }
+        if (data.card.number != null) {
+            jQuery.support.cors = true;
+            jQuery.ajax({
+                url: 'https://api-homolog.credpay.com.br/Tokenizacao/CriarToken',
+                header: {
+                    'Content-Type': 'application/json',
+                },
+                type: 'POST',
+                crossDomain: true,
+                data: data,
+                success: function(response) {
+                    console.log(response);
+                    console.log(response.retorno.token);
+                    obj.ccToken = response.retorno.token;
+                }
+            });
+        } else {
+            obj.ccToken = false;
+        }
+        jQuery('#cammino_payment_cc_zaaz_card_hash').val(obj.ccToken);
+
     }
 </script>

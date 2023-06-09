@@ -17,6 +17,8 @@ class Cammino_Payment_Model_Observer
             'store_name' => Mage::getStoreConfig("payment/cammino_payment_config/store_name"),
             'magento1_api_login' => Mage::getStoreConfig("payment/cammino_payment_config/magento1_api_login"),
             'magento1_api_key' => Mage::getStoreConfig("payment/cammino_payment_config/magento1_api_key"),
+            'store_version' => '1',
+            'base_url' => Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB)
         ];
         if (Mage::getStoreConfig("payment/cammino_payment_pagarme/active")) {
             $request['pagarme'] = [

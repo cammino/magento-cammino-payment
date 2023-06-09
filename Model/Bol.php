@@ -62,7 +62,7 @@ class Cammino_Payment_Model_Bol extends Mage_Payment_Model_Method_Abstract
             $requestJson = [
                 "type" => "authorization",
                 "store_id" => Mage::getStoreConfig("payment/cammino_payment_config/store_id"),
-                "order_id" => $order->getId(),
+                "order_id" => $order->getIncrementId(),
                 "status" => "pending",
                 "amount" => $order->getGrandTotal(),
                 "shipping_amount" => $order->getShippingAmount(),

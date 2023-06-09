@@ -74,6 +74,10 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
             $additional['cammino_payment_cc_pagarme_card_hash'] = $data->getCamminoPaymentCcPagarmeCardHash();
         }
 
+        if ($data->getCamminoPaymentCcZaazCardHash()) {
+            $additional['cammino_payment_cc_zaaz_card_hash'] = $data->getCamminoPaymentCcZaazCardHash();
+        }
+
         if ($additional) {
             $info->setAdditionalInformation($additional);
             Mage::log($info->getAdditionalInformation(), null, 'payment.log');
@@ -112,6 +116,8 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
                 $gateway = 'tuna';
             } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_yapay/active"))) {
                 $gateway = 'yapay';
+            } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_zaaz/active"))) {
+                $gateway = 'zaaz';
             } else {
                 throw new Exception('Sem gateway de pagamento configurado.');
             }
@@ -119,7 +125,7 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
             $requestJson = [
                 "type" => "authorization",
                 "store_id" => Mage::getStoreConfig("payment/cammino_payment_config/store_id"),
-                "order_id" => $order->getId(),
+                "order_id" => $order->getIncrementId(),
                 "status" => "pending",
                 "amount" => $order->getGrandTotal(),
                 "shipping_amount" => $order->getShippingAmount(),
@@ -164,7 +170,9 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
             $requestJson['cc_installments'] = $payment->getAdditionalInformation()['installments'];
             $requestJson['cc_owner'] = $payment->getAdditionalInformation()['cammino_payment_cc_cc_owner'];
             $requestJson["cc_owner_document"] = $payment->getAdditionalInformation()['cammino_payment_cc_cpf'];
-            if ($gateway == 'pagarme5') {
+            if ($gateway == 'zaaz') {
+                $requestJson['cc_token'] == $payment->getAdditionalInformation()['cammino_payment_cc_zaaz_card_hash'];
+            } else if ($gateway == 'pagarme5') {
               $requestJson['cc_token'] = $payment->getAdditionalInformation()['cammino_payment_cc_pagarme_card_hash'];
             } else {
               $requestJson["cc_brand"] = self::getCcBrand($payment->getAdditionalInformation('cc_number'));
