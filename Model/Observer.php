@@ -30,6 +30,8 @@ class Cammino_Payment_Model_Observer
         if (Mage::getStoreConfig("payment/cammino_payment_zaaz/active")) {
             $request['zaaz'] = [
                 'loja_id' => Mage::getStoreConfig("payment/cammino_payment_zaaz/loja_id"),
+                'user' => Mage::getStoreConfig("payment/cammino_payment_zaaz/user"),
+                'key' => Mage::getStoreConfig("payment/cammino_payment_zaaz/key"),
                 'mode' => Mage::getStoreConfig("payment/cammino_payment_zaaz/mode")
             ];
         }
@@ -56,7 +58,7 @@ class Cammino_Payment_Model_Observer
 
         $jsonBody = json_encode($request);
 
-        $url = 'https://payment.cammino.digital/settings';
+        $url = Mage::getStoreConfig("payment/cammino_payment_config/api_url") . '/settings';
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonBody);

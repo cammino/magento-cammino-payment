@@ -5,6 +5,7 @@
         <!-- card hashes and tokens !-->
         <input type="hidden" id="<?php echo $_code ?>_pagarme_card_hash" name="payment[<?php echo $_code ?>_pagarme_card_hash]" value="" />
         <input type="hidden" id="<?php echo $_code ?>_zaaz_card_hash" name="payment[<?php echo $_code ?>_zaaz_card_hash]" value="" />
+        <input type="hidden" id="<?php echo $_code ?>_zaaz_access_token" name="payment[<?php echo $_code ?>_zaaz_access_token]" value="" />
 
         <select id="<?php echo $_code ?>_cc_type" title="<?php echo $this->__('Credit Card Type') ?>" style="display: none;">
             <option value=""><?php echo $this->__('--Please Select--') ?></option>
@@ -221,7 +222,7 @@
 
     updatePagarmeToken = function() {
         var obj = this;
-        if (!'<?php echo Mage::getStoreConfig("payment/cammino_payment_pagarme/active"); ?>') {
+        if ('<?php echo Mage::getStoreConfig("payment/cammino_payment_pagarme/active"); ?>' == '0') {
             return false;
         }
         var data = {
@@ -260,7 +261,7 @@
 
     updateZaazToken = function() {
         var obj = this;
-        if (!'<?php echo Mage::getStoreConfig("payment/cammino_payment_zaaz/active"); ?>') {
+        if ('<?php echo Mage::getStoreConfig("payment/cammino_payment_zaaz/active"); ?>' == '0') {
             return false;
         }
         data = {
@@ -285,7 +286,7 @@
         if (data.number != null) {
             jQuery.support.cors = true;
             jQuery.ajax({
-                url: 'https://api-homolog.credpay.com.br/Tokenizacao/CriarToken',
+                url: '<?php echo Mage::getUrl('camminopayment/token/zaaz'); ?>',
                 header: {
                     'Content-Type': 'application/json',
                 },
@@ -293,14 +294,19 @@
                 crossDomain: true,
                 data: data,
                 success: function(response) {
-                    obj.ccToken = response.retorno.token;
+                    var responseJson = JSON.parse(response)
+                    jQuery('#cammino_payment_cc_zaaz_access_token').val(responseJson.access_token);
+                    jQuery('#cammino_payment_cc_zaaz_card_hash').val(responseJson.retorno.token);
+                    if(responseJson.erros) {
+                        console.log(responseJson.erros)
+                    }
                 }
             });
         } else {
             obj.ccToken = false;
+            jQuery('#cammino_payment_cc_zaaz_access_token').val(null);
+            jQuery('#cammino_payment_cc_zaaz_card_hash').val(null);
         }
-        jQuery('#cammino_payment_cc_zaaz_card_hash').val(obj.ccToken);
-
     }
 
     function getCreditCardLabel(cardNumber) {

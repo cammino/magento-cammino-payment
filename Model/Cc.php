@@ -74,6 +74,10 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
             $additional['cammino_payment_cc_pagarme_card_hash'] = $data->getCamminoPaymentCcPagarmeCardHash();
         }
 
+        if ($data->getCamminoPaymentCcZaazAccessToken()) {
+            $additional['cammino_payment_cc_zaaz_access_token'] = $data->getCamminoPaymentCcZaazAccessToken();
+        }
+
         if ($data->getCamminoPaymentCcZaazCardHash()) {
             $additional['cammino_payment_cc_zaaz_card_hash'] = $data->getCamminoPaymentCcZaazCardHash();
         }
@@ -171,7 +175,8 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
             $requestJson['cc_owner'] = $payment->getAdditionalInformation()['cammino_payment_cc_cc_owner'];
             $requestJson["cc_owner_document"] = $payment->getAdditionalInformation()['cammino_payment_cc_cpf'];
             if ($gateway == 'zaaz') {
-                $requestJson['cc_token'] == $payment->getAdditionalInformation()['cammino_payment_cc_zaaz_card_hash'];
+                $requestJson['access_token'] = $payment->getAdditionalInformation()['cammino_payment_cc_zaaz_access_token'];
+                $requestJson['cc_token'] = $payment->getAdditionalInformation()['cammino_payment_cc_zaaz_card_hash'];
             } else if ($gateway == 'pagarme5') {
               $requestJson['cc_token'] = $payment->getAdditionalInformation()['cammino_payment_cc_pagarme_card_hash'];
             } else {
@@ -198,7 +203,7 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
 
             Mage::log('REQUEST::: ' . $jsonBody, null, 'payment.log');
 
-            $url = 'https://payment.cammino.digital/transactions';
+            $url = Mage::getStoreConfig("payment/cammino_payment_config/api_url") . '/transactions';
             $curl = curl_init($url);
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
             curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonBody);

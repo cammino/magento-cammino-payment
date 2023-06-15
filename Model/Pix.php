@@ -115,7 +115,7 @@ class Cammino_Payment_Model_Pix extends Mage_Payment_Model_Method_Abstract
 
             Mage::log('REQUEST::: ' . $jsonBody, null, 'payment.log');
 
-            $url = 'https://payment.cammino.digital/transactions';
+            $url = Mage::getStoreConfig("payment/cammino_payment_config/api_url") . '/transactions';
             $curl = curl_init($url);
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
             curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonBody);
