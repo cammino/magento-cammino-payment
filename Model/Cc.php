@@ -230,6 +230,17 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
                 ->setCamminoPaymentUrl($responseArray['url'])
                 ->save();
 
+            if ($gateway == 'zaaz') {
+                $invoice = Mage::getModel('sales/service_order', $order)->prepareInvoice();
+                $invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::CAPTURE_OFFLINE);
+                $invoice->register();
+                $invoice->getOrder()->setIsInProcess(true);
+                $transactionSave = Mage::getModel('core/resource_transaction')
+                    ->addObject($invoice)
+                    ->addObject($invoice->getOrder());
+                $transactionSave->save();
+            }
+
             return $this;
             
         } catch (Mage_Core_Exception $e) {

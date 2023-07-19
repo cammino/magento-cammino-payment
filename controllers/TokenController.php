@@ -6,7 +6,7 @@ class Cammino_Payment_TokenController extends Mage_Core_Controller_Front_Action 
 
         Mage::log('-- Iniciando tokenização ZaaZ Pay --', null, 'payment.log');
 
-        $url = 'https://api-homolog.credpay.com.br/AuthCredPay';
+        $url = (Mage::getStoreConfig("payment/cammino_payment_zaaz/mode") == 'hml') ? 'https://api-homolog.credpay.com.br/AuthCredPay' : 'https://api.credpay.com.br/AuthCredPay';
         $data = array(
             'User' => Mage::getStoreConfig("payment/cammino_payment_zaaz/user"),
             'Key' => Mage::getStoreConfig("payment/cammino_payment_zaaz/key"),
@@ -36,7 +36,7 @@ class Cammino_Payment_TokenController extends Mage_Core_Controller_Front_Action 
 
         if(!empty($responseAuthDecoded['access_token'])) {
 
-            $url = 'https://api-homolog.credpay.com.br/Tokenizacao/CriarToken';
+            $url = (Mage::getStoreConfig("payment/cammino_payment_zaaz/mode") == 'hml') ? 'https://api-homolog.credpay.com.br/Tokenizacao/CriarToken' : 'https://api.credpay.com.br/Tokenizacao/CriarToken';
             $data = array(
                 "nomeDoCliente" => $this->getRequest()->getPost('nomeDoCliente'),
                 "documento" => $this->getRequest()->getPost('documento'),
@@ -58,13 +58,13 @@ class Cammino_Payment_TokenController extends Mage_Core_Controller_Front_Action 
                 "holderNameDocumento" => $this->getRequest()->getPost('holderNameDocumento')
             );
             Mage::log('Request tokenização: ' . json_encode($data), null, 'payment.log');
-                              
     
             $options = array(
                 CURLOPT_URL => $url,
                 CURLOPT_POST => true,
                 CURLOPT_POSTFIELDS => http_build_query($data),
                 CURLOPT_HTTPHEADER => array(
+                    "Authorization: Bearer " . $responseAuthDecoded['access_token'],
                     'Content-Type: application/x-www-form-urlencoded'
                 ),
                 CURLOPT_RETURNTRANSFER => true
