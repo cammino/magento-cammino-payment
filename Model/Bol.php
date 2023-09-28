@@ -55,6 +55,8 @@ class Cammino_Payment_Model_Bol extends Mage_Payment_Model_Method_Abstract
                 $gateway = 'tuna';
             } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_yapay/active"))) {
                 $gateway = 'yapay';
+            } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_sicoob/active"))) {
+                $gateway = 'sicoob';
             } else {
                 throw new Exception('Sem gateway de pagamento configurado.');
             }
