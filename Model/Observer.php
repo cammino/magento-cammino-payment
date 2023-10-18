@@ -39,6 +39,8 @@ class Cammino_Payment_Model_Observer
             $request['sicoob'] = [
                 'client_id' => Mage::getStoreConfig("payment/cammino_payment_sicoob/client_id"),
                 'secret_id' => Mage::getStoreConfig("payment/cammino_payment_sicoob/secret_id"),
+                'conta_corrente' => Mage::getStoreConfig("payment/cammino_payment_sicoob/conta_corrente"),
+                'numero_contrato' => Mage::getStoreConfig("payment/cammino_payment_sicoob/numero_contrato"),
                 'mode' => Mage::getStoreConfig("payment/cammino_payment_sicoob/mode")
             ];
         }

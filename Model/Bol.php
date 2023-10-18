@@ -138,11 +138,28 @@ class Cammino_Payment_Model_Bol extends Mage_Payment_Model_Method_Abstract
                 throw new Exception('Erro no pagamento: ' . $responseArray['message']);
             }
 
-            $payment
-                ->setCamminoPaymentTransactionId($responseArray['transaction_id'])
-                ->setCamminoPaymentDigitableLine($responseArray['digitable_line'])
-                ->setCamminoPaymentUrl($responseArray['url'])
-                ->save();
+
+            if ($gateway == 'sicoob') {
+                $bin = base64_decode($responseArray['url'], true);
+                if (strpos($bin, '%PDF') !== 0) {
+                  throw new Exception('Missing the PDF file signature');
+                }
+                $dirPath = Mage::getBaseDir('media') . DS . 'payment';
+                $filepath   = $dirPath . DS . $responseArray['transaction_id'] . '.pdf';
+                file_put_contents($filepath, $bin);
+                $payment
+                    ->setCamminoPaymentTransactionId($responseArray['transaction_id'])
+                    ->setCamminoPaymentDigitableLine($responseArray['digitable_line'])
+                    ->setCamminoPaymentUrl(Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB) . 'media/payment/' . $responseArray['transaction_id'] . '.pdf')
+                    ->save();
+            } else {
+                $payment
+                    ->setCamminoPaymentTransactionId($responseArray['transaction_id'])
+                    ->setCamminoPaymentDigitableLine($responseArray['digitable_line'])
+                    ->setCamminoPaymentUrl($responseArray['url'])
+                    ->save();
+            }
+
 
             return $this;
             

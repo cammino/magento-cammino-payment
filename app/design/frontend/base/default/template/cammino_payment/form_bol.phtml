@@ -1,9 +1,34 @@
 <?php $_code = $this->getMethodCode(); ?>
+<?php
+
+    if (!empty(Mage::getStoreConfig("payment/cammino_payment_pagarme/active"))) {
+        $gateway = 'pagarme' . Mage::getStoreConfig("payment/cammino_payment_pagarme/version");
+    } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_pagseguro/active"))) {
+        $gateway = 'pagseguro';
+    } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_cielo/active"))) {
+        $gateway = 'cielo';
+    } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_tuna/active"))) {
+        $gateway = 'tuna';
+    } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_yapay/active"))) {
+        $gateway = 'yapay';
+    } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_sicoob/active"))) {
+        $gateway = 'sicoob';
+    } else {
+        $gateway = 'desconhecido';
+    }
+
+    $gatewaysThatRequireCpf = ['pagarme', 'pagseguro', 'cielo', 'tuna', 'yapay'];
+    $gatewaysThatDontRequireCpf = ['sicoob'];
+
+?>
+
 <ul class="form-list" id="payment_form_<?php echo $this->getMethodCode() ?>" style="display:none;">
-    <li id="<?php echo $_code ?>_cpf_div">
-        <label for="<?php echo $_code ?>_cpf" class="required"><em>*</em>CPF</label>
-        <div class="input-box">
-            <input type="text" id="<?php echo $_code ?>_cpf" name="payment[<?php echo $_code ?>_cpf]" title="<?php echo $this->__('CPF') ?>" class="input-text required-entry validate-digits" value="" />
-        </div>
-    </li>
+    <?php if(in_array($gateway, $gatewaysThatRequireCpf)): ?>
+        <li id="<?php echo $_code ?>_cpf_div">
+            <label for="<?php echo $_code ?>_cpf" class="required"><em>*</em>CPF</label>
+            <div class="input-box">
+                <input type="text" id="<?php echo $_code ?>_cpf" name="payment[<?php echo $_code ?>_cpf]" title="<?php echo $this->__('CPF') ?>" class="input-text required-entry validate-digits" value="" />
+            </div>
+        </li>
+    <?php endif; ?>
 </ul>
