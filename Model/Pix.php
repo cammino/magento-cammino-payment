@@ -50,6 +50,10 @@ class Cammino_Payment_Model_Pix extends Mage_Payment_Model_Method_Abstract
                 throw new Exception('Sem gateway de pagamento configurado ou gateway desativado.');
             }
 
+            if($gateway == 'pagarme') {
+                $gateway = $gateway . Mage::getStoreConfig("payment/cammino_payment_pagarme/version");
+            }
+
             $requestJson = [
                 "type" => "authorization",
                 "store_id" => Mage::getStoreConfig("payment/cammino_payment_config/store_id"),
