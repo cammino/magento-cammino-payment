@@ -35,6 +35,14 @@ class Cammino_Payment_Model_Observer
                 'mode' => Mage::getStoreConfig("payment/cammino_payment_zaaz/mode")
             ];
         }
+        if (Mage::getStoreConfig("payment/cammino_payment_cielo/active")) {
+            $request['cielo'] = [
+                'merchant_id' => Mage::getStoreConfig("payment/cammino_payment_cielo/merchant_id"),
+                'merchant_key' => Mage::getStoreConfig("payment/cammino_payment_cielo/merchant_key"),
+                'provider' => Mage::getStoreConfig("payment/cammino_payment_cielo/provider"),
+                'mode' => Mage::getStoreConfig("payment/cammino_payment_cielo/mode")
+            ];
+        }
         if (Mage::getStoreConfig("payment/cammino_payment_sicoob/active")) {
             $request['sicoob'] = [
                 'client_id' => Mage::getStoreConfig("payment/cammino_payment_sicoob/client_id"),

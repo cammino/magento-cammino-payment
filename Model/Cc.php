@@ -122,6 +122,8 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
                 $gateway = 'yapay';
             } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_zaaz/active"))) {
                 $gateway = 'zaaz';
+            } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_cielo/active"))) {
+                $gateway = 'cielo';
             } else {
                 throw new Exception('Sem gateway de pagamento configurado.');
             }
