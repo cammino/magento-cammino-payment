@@ -12,13 +12,7 @@
         <models>
             <cammino_payment>
                 <class>Cammino_Payment_Model</class>
-                <resourceModel>cammino_payment_resource</resourceModel>
             </cammino_payment>
-            <cammino_payment_resource>
-                <class>Cammino_Payment_Model_Resource</class>
-                <entities>
-                </entities>
-            </cammino_payment_resource>
         </models>
         <blocks>
             <cammino_payment>
