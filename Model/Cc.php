@@ -182,10 +182,11 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
             } else if ($gateway == 'pagarme5') {
               $requestJson['cc_token'] = $payment->getAdditionalInformation()['cammino_payment_cc_pagarme_card_hash'];
             } else {
-              $requestJson["cc_brand"] = self::getCcBrand($payment->getAdditionalInformation('cc_number'));
-              $requestJson['cc_number'] = self::encrypt($payment->getAdditionalInformation('cc_number'));
-              $requestJson['cc_cvv'] = self::encrypt($payment->getAdditionalInformation('cc_cvv'));
-              $requestJson['cc_expiration'] = self::encrypt($payment->getAdditionalInformation('cc_expiration'));
+              $requestJson["cc_brand"] = self::getCcBrand($payment->getAdditionalInformation('cammino_payment_cc_cc_number'));
+              $requestJson['cc_number'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_cc_number'));
+              Mage::log($requestJson['cc_number'], null, 'payment.log');
+              $requestJson['cc_cvv'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_cc_cid'));
+              $requestJson['cc_expiration'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_expiration') . '/' . $payment->getAdditionalInformation('cammino_payment_cc_expiration_yr'));
             }
             //Pagseguro sender hash
             if ($gateway == 'pagseguro') {
@@ -256,6 +257,7 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
     }
     
     private function encrypt($plaintext) {
+        Mage::log($plaintext, null, 'payment.log');
         $password       = 'lbwyBzfgzUIvXZFShJuikaWvLJhIVq36';
         $iv_size        = openssl_cipher_iv_length('aes-256-cbc');
         $iv             = openssl_random_pseudo_bytes($iv_size);
