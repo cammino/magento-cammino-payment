@@ -24,7 +24,7 @@ class Cammino_Payment_Model_Observer
             $request['pagarme'] = [
                 'api_key' => Mage::getStoreConfig("payment/cammino_payment_pagarme/api_key"),
                 'encryption_key' => Mage::getStoreConfig("payment/cammino_payment_pagarme/encryption_key"),
-                'mode' => Mage::getStoreConfig("payment/cammino_payment_pagarme/mode")
+                'mode' => (Mage::getStoreConfig("payment/cammino_payment_pagarme/mode") == 'production') ? 'production' : 'homolog'
             ];
         }
         if (Mage::getStoreConfig("payment/cammino_payment_zaaz/active")) {
@@ -32,7 +32,7 @@ class Cammino_Payment_Model_Observer
                 'loja_id' => Mage::getStoreConfig("payment/cammino_payment_zaaz/loja_id"),
                 'user' => Mage::getStoreConfig("payment/cammino_payment_zaaz/user"),
                 'key' => Mage::getStoreConfig("payment/cammino_payment_zaaz/key"),
-                'mode' => Mage::getStoreConfig("payment/cammino_payment_zaaz/mode")
+                'mode' => (Mage::getStoreConfig("payment/cammino_payment_zaaz/mode") == 'production') ? 'prod' : 'hml'
             ];
         }
         if (Mage::getStoreConfig("payment/cammino_payment_cielo/active")) {
@@ -40,7 +40,7 @@ class Cammino_Payment_Model_Observer
                 'merchant_id' => Mage::getStoreConfig("payment/cammino_payment_cielo/merchant_id"),
                 'merchant_key' => Mage::getStoreConfig("payment/cammino_payment_cielo/merchant_key"),
                 'provider' => Mage::getStoreConfig("payment/cammino_payment_cielo/provider"),
-                'mode' => Mage::getStoreConfig("payment/cammino_payment_cielo/mode")
+                'mode' => (Mage::getStoreConfig("payment/cammino_payment_cielo/mode") == 'production') ? 'production' : 'test'
             ];
         }
         if (Mage::getStoreConfig("payment/cammino_payment_sicoob/active")) {
@@ -49,7 +49,7 @@ class Cammino_Payment_Model_Observer
                 'secret_id' => Mage::getStoreConfig("payment/cammino_payment_sicoob/secret_id"),
                 'conta_corrente' => Mage::getStoreConfig("payment/cammino_payment_sicoob/conta_corrente"),
                 'numero_contrato' => Mage::getStoreConfig("payment/cammino_payment_sicoob/numero_contrato"),
-                'mode' => Mage::getStoreConfig("payment/cammino_payment_sicoob/mode")
+                'mode' => (Mage::getStoreConfig("payment/cammino_payment_sicoob/mode") == 'production') ? 'produto' : 'sandbox'
             ];
         }
         if (Mage::getStoreConfig("payment/cammino_payment_pix/active")) {

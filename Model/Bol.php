@@ -96,6 +96,13 @@ class Cammino_Payment_Model_Bol extends Mage_Payment_Model_Method_Abstract
                 "ip" => ""
             ];
 
+            if($gateway == 'sicoob') {
+                $requestJson['tipo_juros'] = Mage::getStoreConfig("payment/cammino_payment_sicoob/tipo_juros");
+                $requestJson['tipo_multa'] = Mage::getStoreConfig("payment/cammino_payment_sicoob/tipo_multa");
+                $requestJson['valor_juros'] = Mage::getStoreConfig("payment/cammino_payment_sicoob/tipo_multa");
+                $requestJson['valor_multa'] = Mage::getStoreConfig("payment/cammino_payment_sicoob/valor_multa");
+            }
+
             foreach ($items as $item) {
                 $requestJson["items"][] = [
                     "sku" => $item->getSku(),
