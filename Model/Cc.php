@@ -109,23 +109,9 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
             $billingAddress  = $order->getBillingAddress();
             $capture         = Mage::getStoreConfig("payment/cammino_payment_cc/authorize_capture");
 
-
-            if (!empty(Mage::getStoreConfig("payment/cammino_payment_pagarme/active"))) {
-                $gateway = 'pagarme' . Mage::getStoreConfig("payment/cammino_payment_pagarme/version");
-            } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_pagseguro/active"))) {
-                $gateway = 'pagseguro';
-            } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_cielo/active"))) {
-                $gateway = 'cielo';
-            } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_tuna/active"))) {
-                $gateway = 'tuna';
-            } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_yapay/active"))) {
-                $gateway = 'yapay';
-            } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_zaaz/active"))) {
-                $gateway = 'zaaz';
-            } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_cielo/active"))) {
-                $gateway = 'cielo';
-            } else {
-                throw new Exception('Sem gateway de pagamento configurado.');
+            $gateway = Mage::getStoreConfig("payment/cammino_payment_cc/gateway");
+            if (empty(Mage::getStoreConfig("payment/cammino_payment_" . $gateway . "/active"))) {
+                throw new Exception('Sem gateway de pagamento configurado ou gateway desativado.');
             }
 
             $requestJson = [
