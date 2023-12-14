@@ -233,7 +233,7 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
                 ->setCamminoPaymentUrl($responseArray['url'])
                 ->save();
 
-            if ($gateway == 'zaaz') {
+            if (($gateway == 'zaaz') || ($gateway == 'cielo')) {
                 $invoice = Mage::getModel('sales/service_order', $order)->prepareInvoice();
                 $invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::CAPTURE_OFFLINE);
                 $invoice->register();
