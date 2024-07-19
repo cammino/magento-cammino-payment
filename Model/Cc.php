@@ -142,7 +142,7 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
                     "city" => $billingAddress->getCity(),
                     "region" => self::getRegionSigla($billingAddress->getRegion()),
                     "country" => "Brasil",
-                    "zipcode" => $billingAddress->getPostcode()
+                    "zipcode" => str_replace('-', '', $billingAddress->getPostcode()),
                 ],
                 "shipping" => [
                     "address1" => (!empty($shippingAddress->getStreet()[0])) ? $shippingAddress->getStreet()[0] : '', //rua
@@ -152,7 +152,7 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
                     "city" => $shippingAddress->getCity(),
                     "region" => self::getRegionSigla($shippingAddress->getRegion()),
                     "country" => "Brasil",
-                    "zipcode" => $shippingAddress->getPostcode()
+                    "zipcode" => str_replace('-', '', $shippingAddress->getPostcode()),
                 ],
                 "items" => [],
                 "ip" => ""
