@@ -13,6 +13,8 @@
         $gateway = 'yapay';
     } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_sicoob/active"))) {
         $gateway = 'sicoob';
+    } else if (!empty(Mage::getStoreConfig("payment/cammino_payment_erede/active"))) {
+        $gateway = 'erede';
     } else {
         $gateway = 'desconhecido';
     }
