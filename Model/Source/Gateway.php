@@ -45,6 +45,10 @@ class Cammino_Payment_Model_Source_Gateway
                 'value' => 'sicoob',
                 'label' => 'Sicoob'
             ),
+            'erede' => array(
+                'value' => 'erede',
+                'label' => 'eRede'
+            ),
         );
 
         return $options;
