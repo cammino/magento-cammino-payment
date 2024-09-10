@@ -173,6 +173,8 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
               Mage::log($requestJson['cc_number'], null, 'payment.log');
               $requestJson['cc_cvv'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_cc_cid'));
               $requestJson['cc_expiration'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_expiration') . '/' . $payment->getAdditionalInformation('cammino_payment_cc_expiration_yr'));
+              $requestJson['cc_expiration_month'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_expiration'));
+              $requestJson['cc_expiration_year'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_expiration_yr'));
             }
             //Pagseguro sender hash
             if ($gateway == 'pagseguro') {

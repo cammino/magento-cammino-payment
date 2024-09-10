@@ -45,8 +45,8 @@ class Cammino_Payment_Model_Observer
         }
         if (Mage::getStoreConfig("payment/cammino_payment_erede/active")) {
             $request['erede'] = [
-                'merchant_id' => Mage::getStoreConfig("payment/cammino_payment_erede/token"),
-                'merchant_key' => Mage::getStoreConfig("payment/cammino_payment_erede/pv"),
+                'token' => Mage::getStoreConfig("payment/cammino_payment_erede/token"),
+                'pv' => Mage::getStoreConfig("payment/cammino_payment_erede/pv"),
                 'mode' => (Mage::getStoreConfig("payment/cammino_payment_erede/mode") == 'production') ? 'production' : 'sandbox'
             ];
         }
