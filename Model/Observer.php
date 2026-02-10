@@ -103,4 +103,82 @@ class Cammino_Payment_Model_Observer
 
     }
 
+    public function clearSensitivePaymentData(Varien_Event_Observer $observer)
+    {
+        Mage::log('Limpando informações sensíveis do additional information...', null, 'payment.log');
+        $order = $observer->getEvent()->getOrder();
+        $payment = $order->getPayment();
+
+        if (!$payment) {
+            return;
+        }
+
+        $additional = $payment->getAdditionalInformation();
+
+        if (!is_array($additional)) {
+            return;
+        }
+
+        $ccLast4 = null;
+
+        if (!empty($additional['cammino_payment_cc_cc_number'])) {
+            $ccLast4 = substr($additional['cammino_payment_cc_cc_number'], -4);
+        }
+
+        // Remove sensitive fields
+        $payment->setAdditionalInformation('cammino_payment_cc_cc_number', '**** **** **** ' . $ccLast4);
+        $payment->setAdditionalInformation('cammino_payment_cc_cc_cid', null);
+        $payment->setAdditionalInformation('cammino_payment_cc_expiration', null);
+        $payment->setAdditionalInformation('cammino_payment_cc_expiration_yr', null);
+
+        try {
+            $payment->save();
+        } catch (Exception $e) {
+            Mage::log($e->getMessage(), null, 'payment.log');
+        }
+    }
+
+    public function clearQuotePaymentSensitiveData(Varien_Event_Observer $observer)
+    {
+        Mage::log('Limpando dados sensíveis do QUOTE após falha...', null, 'payment.log');
+
+        $quote = $observer->getEvent()->getQuote();
+
+        if (!$quote) {
+            return;
+        }
+
+        $payment = $quote->getPayment();
+
+        if (!$payment) {
+            return;
+        }
+
+        if ($payment->getMethod() !== 'cammino_payment_cc') {
+            return;
+        }
+
+        $additional = $payment->getAdditionalInformation();
+
+        if (!is_array($additional)) {
+            return;
+        }
+
+        $ccLast4 = null;
+
+        if (!empty($additional['cammino_payment_cc_cc_number'])) {
+            $ccLast4 = substr($additional['cammino_payment_cc_cc_number'], -4);
+        }
+
+        $payment->setAdditionalInformation('cammino_payment_cc_cc_cid', '');
+        $payment->setAdditionalInformation('cammino_payment_cc_expiration', '');
+        $payment->setAdditionalInformation('cammino_payment_cc_expiration_yr', '');
+
+        try {
+            $payment->save();
+        } catch (Exception $e) {
+            Mage::log($e->getMessage(), null, 'payment.log');
+        }
+    }
+
 }

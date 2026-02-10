@@ -44,6 +44,22 @@
                     </payment_observer>
                 </observers>
             </admin_system_config_section_save_after>
+            <sales_order_place_after>
+                <observers>
+                    <yourmodule_clear_cc_data>
+                        <class>Cammino_Payment_Model_Observer</class>
+                        <method>clearSensitivePaymentData</method>
+                    </yourmodule_clear_cc_data>
+                </observers>
+            </sales_order_place_after>
+            <sales_model_service_quote_submit_failure>
+                <observers>
+                    <clear_cc_after_failure>
+                        <class>Cammino_Payment_Model_Observer</class>
+                        <method>clearQuotePaymentSensitiveData</method>
+                    </clear_cc_after_failure>
+                </observers>
+            </sales_model_service_quote_submit_failure>
         </events>
     </global>
     <frontend>

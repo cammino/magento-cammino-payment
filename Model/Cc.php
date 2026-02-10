@@ -33,7 +33,7 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
     public function assignData($data)
     {
 
-        Mage::log(" ----- assignData Cammino Payment CC ------", null, 'payment.log');
+        // Mage::log(" ----- assignData Cammino Payment CC ------", null, 'payment.log');
 
         if (!($data instanceof Varien_Object)) {
             $data = new Varien_Object($data);
@@ -84,7 +84,7 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
 
         if ($additional) {
             $info->setAdditionalInformation($additional);
-            Mage::log($info->getAdditionalInformation(), null, 'payment.log');
+            // Mage::log($info->getAdditionalInformation(), null, 'payment.log');
         }
         return $this;
     }
@@ -170,7 +170,7 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
             } else {
               $requestJson["cc_brand"] = self::getCcBrand($payment->getAdditionalInformation('cammino_payment_cc_cc_number'));
               $requestJson['cc_number'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_cc_number'));
-              Mage::log($requestJson['cc_number'], null, 'payment.log');
+              // Mage::log($requestJson['cc_number'], null, 'payment.log');
               $requestJson['cc_cvv'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_cc_cid'));
               $requestJson['cc_expiration'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_expiration') . '/' . $payment->getAdditionalInformation('cammino_payment_cc_expiration_yr'));
               $requestJson['cc_expiration_month'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_expiration'));
@@ -245,7 +245,7 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
     }
     
     private function encrypt($plaintext) {
-        Mage::log($plaintext, null, 'payment.log');
+        // Mage::log($plaintext, null, 'payment.log');
         $password       = 'lbwyBzfgzUIvXZFShJuikaWvLJhIVq36';
         $iv_size        = openssl_cipher_iv_length('aes-256-cbc');
         $iv             = openssl_random_pseudo_bytes($iv_size);
