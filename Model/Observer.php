@@ -77,6 +77,12 @@ class Cammino_Payment_Model_Observer
                 'days_to_expire' => Mage::getStoreConfig("payment/cammino_payment_bol/days_to_expire")
             ];
         }
+        if (Mage::getStoreConfig("payment/cammino_payment_appmax/active")) {
+            $request['appmax'] = [
+                'access_token' => Mage::getStoreConfig("payment/cammino_payment_appmax/access_token"),
+                'mode' => (Mage::getStoreConfig("payment/cammino_payment_appmax/mode") == 'production') ? 'production' : 'sandbox'
+            ];
+        }
 
         Mage::log($request, null, 'payment.log');
 

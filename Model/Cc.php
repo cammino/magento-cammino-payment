@@ -82,6 +82,10 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
             $additional['cammino_payment_cc_zaaz_card_hash'] = $data->getCamminoPaymentCcZaazCardHash();
         }
 
+        if ($data->getCamminoPaymentCcAppmaxCardToken()) {
+            $additional['cammino_payment_cc_appmax_card_token'] = $data->getCamminoPaymentCcAppmaxCardToken();
+        }
+
         if ($additional) {
             $info->setAdditionalInformation($additional);
             // Mage::log($info->getAdditionalInformation(), null, 'payment.log');
@@ -132,7 +136,8 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
                     "document" => $customer->getTaxvat(),
                     "phone" => $billingAddress->getTelephone(),
                     "birthday" => $customer->getDob(),
-                    "country" => "Brasil"
+                    "country" => "Brasil",
+                    "ip" => Mage::helper('core/http')->getRemoteAddr()
                 ],
                 "billing" => [
                     "address1" => (!empty($billingAddress->getStreet()[0])) ? $billingAddress->getStreet()[0] : '', //rua
@@ -166,7 +171,9 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
                 $requestJson['access_token'] = $payment->getAdditionalInformation()['cammino_payment_cc_zaaz_access_token'];
                 $requestJson['cc_token'] = $payment->getAdditionalInformation()['cammino_payment_cc_zaaz_card_hash'];
             } else if ($gateway == 'pagarme5') {
-              $requestJson['cc_token'] = $payment->getAdditionalInformation()['cammino_payment_cc_pagarme_card_hash'];
+                $requestJson['cc_token'] = $payment->getAdditionalInformation()['cammino_payment_cc_pagarme_card_hash'];
+            } else if ($gateway == 'appmax') {
+                $requestJson['cc_token'] = $payment->getAdditionalInformation()['cammino_payment_cc_appmax_card_token'];
             } else {
               $requestJson["cc_brand"] = self::getCcBrand($payment->getAdditionalInformation('cammino_payment_cc_cc_number'));
               $requestJson['cc_number'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_cc_number'));

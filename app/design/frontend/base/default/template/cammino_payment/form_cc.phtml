@@ -6,6 +6,7 @@
         <input type="hidden" id="<?php echo $_code ?>_pagarme_card_hash" name="payment[<?php echo $_code ?>_pagarme_card_hash]" value="" />
         <input type="hidden" id="<?php echo $_code ?>_zaaz_card_hash" name="payment[<?php echo $_code ?>_zaaz_card_hash]" value="" />
         <input type="hidden" id="<?php echo $_code ?>_zaaz_access_token" name="payment[<?php echo $_code ?>_zaaz_access_token]" value="" />
+        <input type="hidden" id="<?php echo $_code ?>_appmax_card_token" name="payment[<?php echo $_code ?>_appmax_card_token]" value="" />
 
         <select id="<?php echo $_code ?>_cc_type" title="<?php echo $this->__('Credit Card Type') ?>" style="display: none;">
             <option value=""><?php echo $this->__('--Please Select--') ?></option>
@@ -198,26 +199,32 @@
     jQuery('#cammino_payment_cc_cc_owner').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
+        updateAppmaxToken();
     });
     jQuery('#cammino_payment_cc_cc_number').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
+        updateAppmaxToken();
     });
     jQuery('#cammino_payment_cc_expiration').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
+        updateAppmaxToken();
     });
     jQuery('#cammino_payment_cc_expiration_yr').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
+        updateAppmaxToken();
     });
     jQuery('#cammino_payment_cc_cc_cid').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
+        updateAppmaxToken();
     });
     jQuery('#cammino_payment_cc_cpf').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
+        updateAppmaxToken();
     });
 
     updatePagarmeToken = function() {
@@ -335,6 +342,44 @@
             return 'jcb';
         }
         return '';
+    }
+
+    updateAppmaxToken = function() {
+        if ('<?php echo Mage::getStoreConfig("payment/cammino_payment_appmax/active"); ?>' == '0') {
+            return false;
+        }
+        var number = jQuery('#cammino_payment_cc_cc_number').val()
+            ? jQuery('#cammino_payment_cc_cc_number').val().replace(/[^0-9]+/g, '') : null;
+        var cvv = jQuery('#cammino_payment_cc_cc_cid').val()
+            ? jQuery('#cammino_payment_cc_cc_cid').val() : null;
+        var expMonth = jQuery('#cammino_payment_cc_expiration').val()
+            ? jQuery('#cammino_payment_cc_expiration').val() : null;
+        var expYear = jQuery('#cammino_payment_cc_expiration_yr').val()
+            ? jQuery('#cammino_payment_cc_expiration_yr').val() : null;
+        var holderName = jQuery('#cammino_payment_cc_cc_owner').val()
+            ? jQuery('#cammino_payment_cc_cc_owner').val() : null;
+
+        if (!number || !cvv || !expMonth || !expYear || !holderName) {
+            return false;
+        }
+
+        jQuery.ajax({
+            url: '<?php echo Mage::getUrl('camminopayment/token/appmax'); ?>',
+            type: 'POST',
+            data: {
+                number: number,
+                cvv: cvv,
+                expiration_month: expMonth,
+                expiration_year: expYear,
+                holder_name: holderName
+            },
+            success: function(response) {
+                var responseJson = (typeof response === 'string') ? JSON.parse(response) : response;
+                if (responseJson && responseJson.data && responseJson.data.token) {
+                    jQuery('#cammino_payment_cc_appmax_card_token').val(responseJson.data.token);
+                }
+            }
+        });
     }
 
     if (jQuery('#cammino_payment_cc_cpf')) {

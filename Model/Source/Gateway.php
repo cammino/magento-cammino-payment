@@ -49,6 +49,10 @@ class Cammino_Payment_Model_Source_Gateway
                 'value' => 'erede',
                 'label' => 'eRede'
             ),
+            'appmax' => array(
+                'value' => 'appmax',
+                'label' => 'AppMax'
+            ),
         );
 
         return $options;

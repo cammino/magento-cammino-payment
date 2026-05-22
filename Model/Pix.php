@@ -71,7 +71,8 @@ class Cammino_Payment_Model_Pix extends Mage_Payment_Model_Method_Abstract
                     "document" => $customer->getTaxvat(),
                     "phone" => $billingAddress->getTelephone(),
                     "birthday" => $customer->getDob(),
-                    "country" => "Brasil"
+                    "country" => "Brasil",
+                    "ip" => Mage::helper('core/http')->getRemoteAddr()
                 ],
                 "billing" => [
                     "address1" => (!empty($billingAddress->getStreet()[0])) ? $billingAddress->getStreet()[0] : '', //rua

@@ -86,4 +86,49 @@ class Cammino_Payment_TokenController extends Mage_Core_Controller_Front_Action 
         
         return;
     }
+
+    public function appmaxAction()
+    {
+        Mage::log('-- Iniciando tokenização AppMax --', null, 'payment.log');
+
+        $mode = Mage::getStoreConfig("payment/cammino_payment_appmax/mode");
+        $url = ($mode == 'production')
+            ? 'https://api.appmax.com.br/v1/payments/tokenize'
+            : 'https://api.sandboxappmax.com.br/v1/payments/tokenize';
+
+        $data = json_encode([
+            'payment_data' => [
+                'credit_card' => [
+                    'number'           => $this->getRequest()->getPost('number'),
+                    'cvv'              => $this->getRequest()->getPost('cvv'),
+                    'expiration_month' => $this->getRequest()->getPost('expiration_month'),
+                    'expiration_year'  => $this->getRequest()->getPost('expiration_year'),
+                    'holder_name'      => $this->getRequest()->getPost('holder_name'),
+                ]
+            ]
+        ]);
+
+        Mage::log('Request tokenização AppMax: ' . $data, null, 'payment.log');
+
+        $options = array(
+            CURLOPT_URL            => $url,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => $data,
+            CURLOPT_HTTPHEADER     => array(
+                'Content-Type: application/json',
+                'Accept: application/json',
+                'Authorization: Bearer ' . Mage::getStoreConfig("payment/cammino_payment_appmax/access_token"),
+            ),
+            CURLOPT_RETURNTRANSFER => true,
+        );
+        $curl = curl_init();
+        curl_setopt_array($curl, $options);
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        Mage::log('Response tokenização AppMax: ' . $response, null, 'payment.log');
+
+        $this->getResponse()->setBody($response);
+        return;
+    }
 }
