@@ -91,12 +91,44 @@ class Cammino_Payment_TokenController extends Mage_Core_Controller_Front_Action 
     {
         Mage::log('-- Iniciando tokenização AppMax --', null, 'payment.log');
 
-        $mode = Mage::getStoreConfig("payment/cammino_payment_appmax/mode");
-        $url = ($mode == 'production')
+        $mode         = Mage::getStoreConfig("payment/cammino_payment_appmax/mode");
+        $clientId     = Mage::getStoreConfig("payment/cammino_payment_appmax/client_id");
+        $clientSecret = Mage::getStoreConfig("payment/cammino_payment_appmax/client_secret");
+
+        $authUrl = ($mode == 'production')
+            ? 'https://auth.appmax.com.br/oauth2/token'
+            : 'https://auth.sandboxappmax.com.br/oauth2/token';
+
+        $authOptions = array(
+            CURLOPT_URL            => $authUrl,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => http_build_query([
+                'grant_type'    => 'client_credentials',
+                'client_id'     => $clientId,
+                'client_secret' => $clientSecret,
+            ]),
+            CURLOPT_HTTPHEADER     => array('Content-Type: application/x-www-form-urlencoded'),
+            CURLOPT_RETURNTRANSFER => true,
+        );
+        $curl = curl_init();
+        curl_setopt_array($curl, $authOptions);
+        $authResponse = curl_exec($curl);
+        curl_close($curl);
+
+        $authData = json_decode($authResponse, true);
+        if (empty($authData['access_token'])) {
+            Mage::log('AppMax OAuth2 falhou: ' . $authResponse, null, 'payment.log');
+            $this->getResponse()->setBody(json_encode(['error' => 'OAuth2 authentication failed']));
+            return;
+        }
+
+        $accessToken = $authData['access_token'];
+
+        $tokenizeUrl = ($mode == 'production')
             ? 'https://api.appmax.com.br/v1/payments/tokenize'
             : 'https://api.sandboxappmax.com.br/v1/payments/tokenize';
 
-        $data = json_encode([
+        $payload = json_encode([
             'payment_data' => [
                 'credit_card' => [
                     'number'           => $this->getRequest()->getPost('number'),
@@ -108,21 +140,21 @@ class Cammino_Payment_TokenController extends Mage_Core_Controller_Front_Action 
             ]
         ]);
 
-        Mage::log('Request tokenização AppMax: ' . $data, null, 'payment.log');
+        Mage::log('Request tokenização AppMax: ' . $payload, null, 'payment.log');
 
-        $options = array(
-            CURLOPT_URL            => $url,
+        $tokenOptions = array(
+            CURLOPT_URL            => $tokenizeUrl,
             CURLOPT_POST           => true,
-            CURLOPT_POSTFIELDS     => $data,
+            CURLOPT_POSTFIELDS     => $payload,
             CURLOPT_HTTPHEADER     => array(
                 'Content-Type: application/json',
                 'Accept: application/json',
-                'Authorization: Bearer ' . Mage::getStoreConfig("payment/cammino_payment_appmax/access_token"),
+                'Authorization: Bearer ' . $accessToken,
             ),
             CURLOPT_RETURNTRANSFER => true,
         );
         $curl = curl_init();
-        curl_setopt_array($curl, $options);
+        curl_setopt_array($curl, $tokenOptions);
         $response = curl_exec($curl);
         curl_close($curl);
 

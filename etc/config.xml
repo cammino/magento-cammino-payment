@@ -73,6 +73,17 @@
             </cammino_payment>
         </routers>
     </frontend>
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <cammino_payment before="Mage_Adminhtml">Cammino_Payment_Adminhtml</cammino_payment>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
     <default>
         <payment>
             <cammino_payment_cc>
