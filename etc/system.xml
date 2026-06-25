@@ -603,6 +603,39 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                         </install_button>
+                        <client_id>
+                            <label>Client ID</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </client_id>
+                        <client_secret>
+                            <label>Client Secret</label>
+                            <frontend_type>obscure</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </client_secret>
+                        <external_id>
+                            <label>External ID</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>28</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </external_id>
+                        <sync_keys_button translate="label">
+                            <label>Atualizar Chaves</label>
+                            <frontend_model>cammino_payment/adminhtml_appmax_syncKeys</frontend_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </sync_keys_button>
                     </fields>
                 </cammino_payment_appmax>
 
