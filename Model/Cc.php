@@ -174,6 +174,10 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
                 $requestJson['cc_token'] = $payment->getAdditionalInformation()['cammino_payment_cc_pagarme_card_hash'];
             } else if ($gateway == 'appmax') {
                 $requestJson['cc_token'] = $payment->getAdditionalInformation()['cammino_payment_cc_appmax_card_token'];
+                $requestJson['cc_number'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_cc_number'));
+                $requestJson['cc_cvv'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_cc_cid'));
+                $requestJson['cc_expiration_month'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_expiration'));
+                $requestJson['cc_expiration_year'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_expiration_yr'));
             } else {
               $requestJson["cc_brand"] = self::getCcBrand($payment->getAdditionalInformation('cammino_payment_cc_cc_number'));
               $requestJson['cc_number'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_cc_number'));
