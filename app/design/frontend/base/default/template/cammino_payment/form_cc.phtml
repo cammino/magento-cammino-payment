@@ -7,6 +7,7 @@
         <input type="hidden" id="<?php echo $_code ?>_zaaz_card_hash" name="payment[<?php echo $_code ?>_zaaz_card_hash]" value="" />
         <input type="hidden" id="<?php echo $_code ?>_zaaz_access_token" name="payment[<?php echo $_code ?>_zaaz_access_token]" value="" />
         <input type="hidden" id="<?php echo $_code ?>_appmax_card_token" name="payment[<?php echo $_code ?>_appmax_card_token]" value="" />
+        <input type="hidden" id="<?php echo $_code ?>_ipag_card_token" name="payment[<?php echo $_code ?>_ipag_card_token]" value="" />
 
         <select id="<?php echo $_code ?>_cc_type" title="<?php echo $this->__('Credit Card Type') ?>" style="display: none;">
             <option value=""><?php echo $this->__('--Please Select--') ?></option>
@@ -200,31 +201,37 @@
         updatePagarmeToken();
         updateZaazToken();
         updateAppmaxToken();
+        updateIpagToken();
     });
     jQuery('#cammino_payment_cc_cc_number').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
         updateAppmaxToken();
+        updateIpagToken();
     });
     jQuery('#cammino_payment_cc_expiration').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
         updateAppmaxToken();
+        updateIpagToken();
     });
     jQuery('#cammino_payment_cc_expiration_yr').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
         updateAppmaxToken();
+        updateIpagToken();
     });
     jQuery('#cammino_payment_cc_cc_cid').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
         updateAppmaxToken();
+        updateIpagToken();
     });
     jQuery('#cammino_payment_cc_cpf').blur(function() {
         updatePagarmeToken();
         updateZaazToken();
         updateAppmaxToken();
+        updateIpagToken();
     });
 
     updatePagarmeToken = function() {
@@ -314,6 +321,47 @@
             jQuery('#cammino_payment_cc_zaaz_access_token').val(null);
             jQuery('#cammino_payment_cc_zaaz_card_hash').val(null);
         }
+    }
+
+    updateIpagToken = function() {
+        if ('<?php echo Mage::getStoreConfig("payment/cammino_payment_ipag/active"); ?>' == '0') {
+            return false;
+        }
+        var number = jQuery('#cammino_payment_cc_cc_number').val()
+            ? jQuery('#cammino_payment_cc_cc_number').val().replace(/[^0-9]+/g, '') : null;
+        var cvv = jQuery('#cammino_payment_cc_cc_cid').val()
+            ? jQuery('#cammino_payment_cc_cc_cid').val() : null;
+        var expMonth = jQuery('#cammino_payment_cc_expiration').val()
+            ? jQuery('#cammino_payment_cc_expiration').val() : null;
+        var expYear = jQuery('#cammino_payment_cc_expiration_yr').val()
+            ? jQuery('#cammino_payment_cc_expiration_yr').val() : null;
+        var holderName = jQuery('#cammino_payment_cc_cc_owner').val()
+            ? jQuery('#cammino_payment_cc_cc_owner').val() : null;
+        var cpfCnpj = jQuery('#cammino_payment_cc_cpf').val()
+            ? jQuery('#cammino_payment_cc_cpf').val().replace(/[^0-9]+/g, '') : null;
+
+        if (!number || !cvv || !expMonth || !expYear || !holderName) {
+            return false;
+        }
+
+        jQuery.ajax({
+            url: '<?php echo Mage::getUrl('camminopayment/token/ipag'); ?>',
+            type: 'POST',
+            data: {
+                number: number,
+                cvv: cvv,
+                expiryMonth: expMonth,
+                expiryYear: expYear,
+                holderName: holderName,
+                cpfCnpj: cpfCnpj
+            },
+            success: function(response) {
+                var responseJson = (typeof response === 'string') ? JSON.parse(response) : response;
+                if (responseJson && responseJson.token) {
+                    jQuery('#cammino_payment_cc_ipag_card_token').val(responseJson.token);
+                }
+            }
+        });
     }
 
     function getCreditCardLabel(cardNumber) {

@@ -86,6 +86,10 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
             $additional['cammino_payment_cc_appmax_card_token'] = $data->getCamminoPaymentCcAppmaxCardToken();
         }
 
+        if ($data->getCamminoPaymentCcIpagCardToken()) {
+            $additional['cammino_payment_cc_ipag_card_token'] = $data->getCamminoPaymentCcIpagCardToken();
+        }
+
         if ($additional) {
             $info->setAdditionalInformation($additional);
             // Mage::log($info->getAdditionalInformation(), null, 'payment.log');
@@ -176,6 +180,16 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
                 $requestJson['cc_token'] = $payment->getAdditionalInformation()['cammino_payment_cc_appmax_card_token'];
                 $requestJson['cc_number'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_cc_number'));
                 $requestJson['cc_cvv'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_cc_cid'));
+                $requestJson['cc_expiration_month'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_expiration'));
+                $requestJson['cc_expiration_year'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_expiration_yr'));
+            } else if ($gateway == 'ipag') {
+                if (!empty($payment->getAdditionalInformation('cammino_payment_cc_ipag_card_token'))) {
+                    $requestJson['cc_token'] = $payment->getAdditionalInformation('cammino_payment_cc_ipag_card_token');
+                }
+                $requestJson["cc_brand"] = self::getCcBrand($payment->getAdditionalInformation('cammino_payment_cc_cc_number'));
+                $requestJson['cc_number'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_cc_number'));
+                $requestJson['cc_cvv'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_cc_cid'));
+                $requestJson['cc_expiration'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_expiration') . '/' . $payment->getAdditionalInformation('cammino_payment_cc_expiration_yr'));
                 $requestJson['cc_expiration_month'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_expiration'));
                 $requestJson['cc_expiration_year'] = self::encrypt($payment->getAdditionalInformation('cammino_payment_cc_expiration_yr'));
             } else {

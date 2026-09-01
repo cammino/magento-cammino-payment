@@ -638,6 +638,50 @@
                     </fields>
                 </cammino_payment_appmax>
 
+                <cammino_payment_ipag translate="label" module="cammino_payment">
+                    <label>Cammino Payment - iPag</label>
+                    <sort_order>11</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <active translate="label">
+                            <label>Habilitado</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <sort_order>1</sort_order>
+                        </active>
+                        <api_id>
+                            <label>API ID</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </api_id>
+                        <api_key>
+                            <label>API Key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </api_key>
+                        <mode>
+                            <label>Modo</label>
+                            <frontend_type>select</frontend_type>
+       						<source_model>cammino_payment/source_mode</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </mode>
+                    </fields>
+                </cammino_payment_ipag>
+
             </groups>
         </payment>
     </sections>

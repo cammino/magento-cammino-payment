@@ -53,6 +53,10 @@ class Cammino_Payment_Model_Source_Gateway
                 'value' => 'appmax',
                 'label' => 'AppMax'
             ),
+            'ipag' => array(
+                'value' => 'ipag',
+                'label' => 'iPag'
+            ),
         );
 
         return $options;

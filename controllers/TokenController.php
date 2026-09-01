@@ -87,4 +87,59 @@ class Cammino_Payment_TokenController extends Mage_Core_Controller_Front_Action 
         return;
     }
 
+    public function ipagAction()
+    {
+
+        Mage::log('-- Iniciando tokenização iPag --', null, 'payment.log');
+
+        $baseUrl = (Mage::getStoreConfig("payment/cammino_payment_ipag/mode") == 'production')
+            ? 'https://api.ipag.com.br'
+            : 'https://sandbox.ipag.com.br';
+
+        $data = array(
+            'card' => array(
+                'holderName' => $this->getRequest()->getPost('holderName'),
+                'number' => preg_replace('/\D/', '', $this->getRequest()->getPost('number')),
+                'expiryMonth' => str_pad($this->getRequest()->getPost('expiryMonth'), 2, '0', STR_PAD_LEFT),
+                'expiryYear' => $this->getRequest()->getPost('expiryYear'),
+                'cvv' => $this->getRequest()->getPost('cvv'),
+                'validate' => false
+            ),
+            'holder' => array(
+                'name' => $this->getRequest()->getPost('holderName'),
+                'cpfCnpj' => preg_replace('/\D/', '', $this->getRequest()->getPost('cpfCnpj'))
+            )
+        );
+
+        Mage::log('Request tokenização iPag: ' . json_encode($data), null, 'payment.log');
+
+        $jsonBody = json_encode($data);
+        $options = array(
+            CURLOPT_URL => $baseUrl . '/service/resources/card_tokens',
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $jsonBody,
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($jsonBody),
+                'x-api-version: 2',
+                'Authorization: Basic ' . base64_encode(
+                    Mage::getStoreConfig("payment/cammino_payment_ipag/api_id") . ':' . Mage::getStoreConfig("payment/cammino_payment_ipag/api_key")
+                )
+            ),
+            CURLOPT_RETURNTRANSFER => true
+        );
+        $curl = curl_init();
+        curl_setopt_array($curl, $options);
+        $responseToken = curl_exec($curl);
+        curl_close($curl);
+
+        Mage::log('Response Tokenização iPag: ' . $responseToken, null, 'payment.log');
+
+        $this->getResponse()
+            ->setHeader('Content-Type', 'application/json', true)
+            ->setBody($responseToken);
+
+        return;
+    }
+
 }
