@@ -1,0 +1,6 @@
+<h2><?php echo $this->escapeHtml($this->__($this->getMethod()->getTitle())) ?></h2>
+
+<p>
+    Recorrência: <br>
+    <?php echo $this->getNumberOfRecurrences() ?> pagamentos de <?php echo Mage::helper('core')->currency($this->getRecurrenceAmount(), true, false) ?>
+</p>

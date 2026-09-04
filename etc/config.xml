@@ -107,6 +107,13 @@
                 <payment_action>order</payment_action>
                 <title>Cammino Payment - Pix</title>
             </cammino_payment_pix>
+            <cammino_payment_rec>
+                <model>Cammino_Payment_Model_Rec</model>
+                <active>1</active>
+                <order_status>pending</order_status>
+                <payment_action>order</payment_action>
+                <title>Cammino Payment - Recorrência no Cartão</title>
+            </cammino_payment_rec>
         </payment>
     </default>
 </config>

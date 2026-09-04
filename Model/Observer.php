@@ -66,6 +66,13 @@ class Cammino_Payment_Model_Observer
                 'mode' => (Mage::getStoreConfig("payment/cammino_payment_ipag/mode") == 'production') ? 'production' : 'sandbox'
             ];
         }
+        if (Mage::getStoreConfig("payment/cammino_payment_rec/active")) {
+            $request['rec'] = [
+                'gateway' => Mage::getStoreConfig("payment/cammino_payment_rec/gateway"),
+                'number_of_recurrences' => Mage::getStoreConfig("payment/cammino_payment_rec/number_of_recurrences"),
+                'interval' => Mage::getStoreConfig("payment/cammino_payment_rec/interval")
+            ];
+        }
         if (Mage::getStoreConfig("payment/cammino_payment_pix/active")) {
             $request['pix'] = [
                 'key' => Mage::getStoreConfig("payment/cammino_payment_pix/pix_key")
