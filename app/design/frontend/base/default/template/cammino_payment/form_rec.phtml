@@ -4,16 +4,16 @@
         <input type="hidden" id="<?php echo $_code ?>_ipag_card_token" name="payment[<?php echo $_code ?>_ipag_card_token]" value="" />
     </li>
 
-    <li>
-        <strong><?php echo $this->getNumberOfRecurrences() ?> pagamentos de <?php echo Mage::helper('core')->currency($this->getRecurrenceAmount(), true, false) ?></strong>
-    </li>
-
     <!-- Número do cartão !-->
     <li>
         <label for="<?php echo $_code ?>_cc_number" class="required"><em>*</em><?php echo $this->__('Credit Card Number') ?></label>
         <div class="input-box">
             <input type="text" id="<?php echo $_code ?>_cc_number" title="<?php echo $this->__('Credit Card Number') ?>" name="payment[<?php echo $_code ?>_cc_number]" class="input-text pagarme-only-number required-entry validate-pagarme-cc-number" maxlength="19" value="" placeholder="•••• •••• •••• ••••" />
         </div>
+    </li>
+
+    <li>
+        <strong><?php echo $this->getNumberOfRecurrences() ?> pagamentos de <?php echo Mage::helper('core')->currency($this->getRecurrenceAmount(), true, false) ?></strong>
     </li>
 
 
