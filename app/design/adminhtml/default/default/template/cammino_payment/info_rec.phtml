@@ -1,0 +1,11 @@
+<h2><?php echo $this->escapeHtml($this->__($this->getMethod()->getTitle())) ?></h2>
+
+<p>
+    ID da assinatura: <br>
+    <?php echo $this->escapeHtml($this->getTransactionId()); ?>
+</p>
+
+<p>
+    Recorrência: <br>
+    <?php echo $this->escapeHtml($this->getSummary()); ?>
+</p>

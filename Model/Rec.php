@@ -226,6 +226,13 @@ class Cammino_Payment_Model_Rec extends Mage_Payment_Model_Method_Abstract
                 throw new Exception('Erro no pagamento: ' . $responseArray['message']);
             }
 
+            $cycles = $this->getNumberOfRecurrences();
+            $perCycle = $cycles ? ($order->getGrandTotal() / $cycles) : $order->getGrandTotal();
+            $payment->setAdditionalInformation(
+                'cammino_payment_rec_summary',
+                $cycles . ' cobranças de ' . Mage::helper('core')->currency($perCycle, true, false)
+            );
+
             $payment
                 ->setCamminoPaymentTransactionId($responseArray['transaction_id'])
                 ->setCamminoPaymentDigitableLine($responseArray['digitable_line'])

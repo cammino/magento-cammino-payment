@@ -16,12 +16,28 @@ class Cammino_Payment_Block_Info_Rec extends Mage_Payment_Block_Info
     }
 
     /**
-     * @return float
+     * @return string
      */
-    public function getRecurrenceAmount()
+    public function getSummary()
     {
+        $saved = $this->getInfo()->getAdditionalInformation('cammino_payment_rec_summary');
+        if ($saved) {
+            return $saved;
+        }
+
         $order = $this->getInfo()->getOrder();
-        $recurrences = $this->getNumberOfRecurrences();
-        return ($order && $recurrences) ? ($order->getGrandTotal() / $recurrences) : 0;
+        $cycles = $this->getNumberOfRecurrences();
+        if (!$order || !$cycles) {
+            return '';
+        }
+        return $cycles . ' cobranças de ' . Mage::helper('core')->currency($order->getGrandTotal() / $cycles, true, false);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTransactionId()
+    {
+        return $this->getInfo()->getCamminoPaymentTransactionId();
     }
 }

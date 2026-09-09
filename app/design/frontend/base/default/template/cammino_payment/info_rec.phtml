@@ -2,5 +2,5 @@
 
 <p>
     Recorrência: <br>
-    <?php echo $this->getNumberOfRecurrences() ?> pagamentos de <?php echo Mage::helper('core')->currency($this->getRecurrenceAmount(), true, false) ?>
+    <?php echo $this->escapeHtml($this->getSummary()) ?>
 </p>
