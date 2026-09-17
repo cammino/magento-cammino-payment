@@ -393,7 +393,20 @@
     }
 
     updateAppmaxToken = function() {
+        console.log('[AppMax] updateAppmaxToken chamado');
         if ('<?php echo Mage::getStoreConfig("payment/cammino_payment_appmax/active"); ?>' == '0') {
+            console.log('[AppMax] inativo, saindo');
+            return false;
+        }
+        var mode = '<?php echo Mage::getStoreConfig("payment/cammino_payment_appmax/mode"); ?>';
+        if (mode !== 'production') {
+            console.log('[AppMax] modo sandbox/homolog, pulando tokenizacao - dados do cartao serao enviados direto');
+            return false;
+        }
+        var externalId = '<?php echo Mage::getStoreConfig("payment/cammino_payment_appmax/external_id"); ?>';
+        console.log('[AppMax] externalId:', externalId);
+        if (!externalId) {
+            console.log('[AppMax] sem externalId, saindo');
             return false;
         }
         var number = jQuery('#cammino_payment_cc_cc_number').val()
@@ -407,25 +420,55 @@
         var holderName = jQuery('#cammino_payment_cc_cc_owner').val()
             ? jQuery('#cammino_payment_cc_cc_owner').val() : null;
 
+        console.log('[AppMax] campos:', { number: !!number, cvv: !!cvv, expMonth: expMonth, expYear: expYear, holderName: !!holderName });
+
         if (!number || !cvv || !expMonth || !expYear || !holderName) {
+            console.log('[AppMax] campos incompletos, saindo');
             return false;
         }
 
+        // Normalize year to 2 digits and month to 2 digits
+        if (expYear && expYear.length === 4) {
+            expYear = expYear.substring(2);
+        }
+        if (expMonth && String(expMonth).length === 1) {
+            expMonth = '0' + expMonth;
+        }
+
+        var hubUrl = '<?php echo rtrim(Mage::getStoreConfig("payment/cammino_payment_config/api_url"), "/"); ?>';
+        var storeId = '<?php echo Mage::getStoreConfig("payment/cammino_payment_config/store_id"); ?>';
+        var tokenizeUrl = hubUrl + '/tokenize/appmax';
+
+        var payload = {
+            store_id: storeId,
+            cc_number: number,
+            cc_cvv: cvv,
+            cc_expiration_month: expMonth,
+            cc_expiration_year: expYear,
+            cc_holder_name: holderName
+        };
+
+        console.log('[AppMax] POST', tokenizeUrl, '(store:', storeId + ')');
+
         jQuery.ajax({
-            url: '<?php echo Mage::getUrl('camminopayment/token/appmax'); ?>',
+            url: tokenizeUrl,
             type: 'POST',
-            data: {
-                number: number,
-                cvv: cvv,
-                expiration_month: expMonth,
-                expiration_year: expYear,
-                holder_name: holderName
-            },
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            headers: { 'Accept': 'application/json' },
             success: function(response) {
-                var responseJson = (typeof response === 'string') ? JSON.parse(response) : response;
-                if (responseJson && responseJson.data && responseJson.data.token) {
-                    jQuery('#cammino_payment_cc_appmax_card_token').val(responseJson.data.token);
+                console.log('[AppMax] tokenize response:', JSON.stringify(response));
+                if (response && response.token) {
+                    console.log('[AppMax] token capturado:', response.token.substring(0, 20) + '...');
+                    jQuery('#cammino_payment_cc_appmax_card_token').val(response.token);
+                } else {
+                    console.log('[AppMax] token nao encontrado na resposta:', JSON.stringify(response));
                 }
+            },
+            error: function(xhr, status, error) {
+                console.log('[AppMax] erro na tokenizacao:', status, error);
+                console.log('[AppMax] status HTTP:', xhr.status);
+                console.log('[AppMax] response body:', xhr.responseText);
             }
         });
     }
