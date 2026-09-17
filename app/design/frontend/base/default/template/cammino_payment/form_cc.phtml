@@ -57,11 +57,11 @@
         </div>
     </li>
 
-    <!-- CPF do dono do cartão !-->
+    <!-- CPF/CNPJ do dono do cartão !-->
     <li id="<?php echo $_code ?>_cpf_div">
-        <label for="<?php echo $_code ?>_cpf" class="required"><em>*</em>CPF</label>
+        <label for="<?php echo $_code ?>_cpf" class="required"><em>*</em>CPF/CNPJ</label>
         <div class="input-box">
-            <input type="text" id="<?php echo $_code ?>_cpf" name="payment[<?php echo $_code ?>_cpf]" title="<?php echo $this->__('CPF') ?>" class="input-text required-entry validate-taxvat" value="" maxlength="14" placeholder="___.___.___-__" autocomplete="off" />
+            <input type="text" id="<?php echo $_code ?>_cpf" name="payment[<?php echo $_code ?>_cpf]" title="<?php echo $this->__('CPF/CNPJ') ?>" class="input-text required-entry validate-taxvat" value="" maxlength="18" placeholder="CPF ou CNPJ" autocomplete="off" />
         </div>
     </li>
 
@@ -430,8 +430,16 @@
         });
     }
 
-    if (jQuery('#cammino_payment_cc_cpf')) {
-        jQuery('#cammino_payment_cc_cpf').mask('000.000.000-00');
+    if (jQuery('#cammino_payment_cc_cpf').length) {
+        var cammino_payment_cpfCnpjMaskBehavior = function(val) {
+            return val.replace(/\D/g, '').length > 11 ? '00.000.000/0000-00' : '000.000.000-00#';
+        };
+        var cammino_payment_cpfCnpjOptions = {
+            onKeyPress: function(val, e, field, options) {
+                field.mask(cammino_payment_cpfCnpjMaskBehavior.apply({}, arguments), options);
+            }
+        };
+        jQuery('#cammino_payment_cc_cpf').mask(cammino_payment_cpfCnpjMaskBehavior, cammino_payment_cpfCnpjOptions);
     }
 
     if (jQuery('#cammino_payment_cc_cc_number')) {
