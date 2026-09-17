@@ -60,6 +60,8 @@ class Cammino_Payment_Model_Bol extends Mage_Payment_Model_Method_Abstract
                 "status" => "pending",
                 "amount" => $order->getGrandTotal(),
                 "shipping_amount" => $order->getShippingAmount(),
+                "discount_amount" => abs((float) $order->getDiscountAmount()),
+                "interest_amount" => (float) $order->getFeeAmount(),
                 "method" => $gateway . "_bol",
                 "session" => "",
                 "customer" => [
