@@ -113,8 +113,12 @@ class Cammino_Payment_Model_Observer
         curl_close($curl);
 
         Mage::log('Payment config API response: ' . $response, null, 'payment.log');
-        Mage::log('Store ID: ' . $responseArray['store_id'], null, 'payment.log');
-        Mage::getModel('core/config')->saveConfig('payment/cammino_payment_config/store_id', $responseArray['store_id']);
+        if (is_array($responseArray) && !empty($responseArray['store_id']) && (!isset($responseArray['status']) || $responseArray['status'] !== 'error')) {
+            Mage::log('Store ID: ' . $responseArray['store_id'], null, 'payment.log');
+            Mage::getModel('core/config')->saveConfig('payment/cammino_payment_config/store_id', $responseArray['store_id']);
+        } else {
+            Mage::log('Payment config API retornou erro ou sem store_id, mantendo o store_id atual sem alteração.', null, 'payment.log');
+        }
 
 
     }
