@@ -27,10 +27,25 @@
 <ul class="form-list" id="payment_form_<?php echo $this->getMethodCode() ?>" style="display:none;">
     <?php if(in_array($gateway, $gatewaysThatRequireCpf)): ?>
         <li id="<?php echo $_code ?>_cpf_div">
-            <label for="<?php echo $_code ?>_cpf" class="required"><em>*</em>CPF</label>
+            <label for="<?php echo $_code ?>_cpf" class="required"><em>*</em>CPF/CNPJ</label>
             <div class="input-box">
-                <input type="text" id="<?php echo $_code ?>_cpf" name="payment[<?php echo $_code ?>_cpf]" title="<?php echo $this->__('CPF') ?>" class="input-text required-entry validate-digits" value="" />
+                <input type="text" id="<?php echo $_code ?>_cpf" name="payment[<?php echo $_code ?>_cpf]" title="<?php echo $this->__('CPF/CNPJ') ?>" class="input-text required-entry validate-taxvat" value="" maxlength="18" placeholder="CPF ou CNPJ" autocomplete="off" />
             </div>
         </li>
     <?php endif; ?>
 </ul>
+<?php if(in_array($gateway, $gatewaysThatRequireCpf)): ?>
+<script>
+    if (jQuery('#<?php echo $_code ?>_cpf').length) {
+        var <?php echo $_code ?>_cpfCnpjMaskBehavior = function(val) {
+            return val.replace(/\D/g, '').length > 11 ? '00.000.000/0000-00' : '000.000.000-00#';
+        };
+        var <?php echo $_code ?>_cpfCnpjOptions = {
+            onKeyPress: function(val, e, field, options) {
+                field.mask(<?php echo $_code ?>_cpfCnpjMaskBehavior.apply({}, arguments), options);
+            }
+        };
+        jQuery('#<?php echo $_code ?>_cpf').mask(<?php echo $_code ?>_cpfCnpjMaskBehavior, <?php echo $_code ?>_cpfCnpjOptions);
+    }
+</script>
+<?php endif; ?>
