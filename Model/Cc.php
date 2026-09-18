@@ -9,6 +9,8 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
     protected $_formBlockType = 'cammino_payment/form_cc';
     protected $_infoBlockType = 'cammino_payment/info_cc';
     protected $_canOrder  = true;
+    protected $_canRefund = true;
+    protected $_canRefundInvoicePartial = false;
 
     /**
      * @param string $paymentAction
@@ -21,6 +23,58 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
         $order = $payment->getOrder();
 
         $this->_placeOrder($payment, $order->getBaseTotalDue());
+
+        return $this;
+    }
+
+    /**
+     * Botão "Reembolsar Online" na nota de crédito. Só sabemos processar
+     * automaticamente pelo gateway Appmax por enquanto - os outros seguem
+     * exigindo reembolso manual (offline) direto no painel do gateway.
+     *
+     * @param Varien_Object $payment
+     * @param float $amount
+     * @return $this
+     * @throws Mage_Core_Exception
+     */
+    public function refund(Varien_Object $payment, $amount)
+    {
+        $order = $payment->getOrder();
+        $gateway = Mage::getStoreConfig("payment/cammino_payment_cc/gateway");
+
+        if ($gateway != 'appmax') {
+            Mage::throwException('Reembolso online não suportado para o gateway "' . $gateway . '". Faça o reembolso direto no painel do gateway.');
+        }
+
+        $requestJson = [
+            "store_id" => Mage::getStoreConfig("payment/cammino_payment_config/store_id"),
+            "order_id" => $order->getIncrementId(),
+            "amount" => (float) $amount,
+        ];
+
+        $jsonBody = json_encode($requestJson);
+        Mage::log('REQUEST REFUND::: ' . $jsonBody, null, 'payment.log');
+
+        $url = Mage::getStoreConfig("payment/cammino_payment_config/api_url") . '/transactions/refund';
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonBody);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($jsonBody),
+            'apikey: ' . Mage::getStoreConfig("payment/cammino_payment_config/api_key")
+        ));
+        $response = curl_exec($curl);
+        $responseArray = json_decode($response, true);
+        curl_close($curl);
+
+        Mage::log('RESPONSE REFUND::: ' . $response, null, 'payment.log');
+
+        if (!$responseArray || $responseArray['status'] == 'error') {
+            $message = ($responseArray && isset($responseArray['message'])) ? $responseArray['message'] : 'Sem resposta da API de pagamento.';
+            Mage::throwException('Erro ao solicitar reembolso: ' . $message);
+        }
 
         return $this;
     }

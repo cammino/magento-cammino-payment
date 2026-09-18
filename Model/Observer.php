@@ -123,6 +123,50 @@ class Cammino_Payment_Model_Observer
 
     }
 
+    /**
+     * Quando um pedido é cancelado no Magento (antes de faturar), avisa a
+     * API de pagamento pra ela pedir o estorno na Appmax também - o
+     * cartão já pode ter sido cobrado na hora do checkout, mesmo o pedido
+     * nunca tendo sido faturado no Magento.
+     */
+    public function notifyGatewayCancel(Varien_Event_Observer $observer)
+    {
+        $order = $observer->getEvent()->getOrder();
+        $payment = $order->getPayment();
+
+        if (!$payment || strpos((string) $payment->getMethod(), 'cammino_payment_') !== 0) {
+            return;
+        }
+
+        $gateway = Mage::getStoreConfig("payment/cammino_payment_cc/gateway");
+        if ($gateway != 'appmax') {
+            return;
+        }
+
+        $requestJson = [
+            "store_id" => Mage::getStoreConfig("payment/cammino_payment_config/store_id"),
+            "order_id" => $order->getIncrementId(),
+        ];
+
+        $jsonBody = json_encode($requestJson);
+        Mage::log('REQUEST CANCEL::: ' . $jsonBody, null, 'payment.log');
+
+        $url = Mage::getStoreConfig("payment/cammino_payment_config/api_url") . '/transactions/cancel';
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonBody);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($jsonBody),
+            'apikey: ' . Mage::getStoreConfig("payment/cammino_payment_config/api_key")
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        Mage::log('RESPONSE CANCEL::: ' . $response, null, 'payment.log');
+    }
+
     public function clearSensitivePaymentData(Varien_Event_Observer $observer)
     {
         Mage::log('Limpando informações sensíveis do additional information...', null, 'payment.log');

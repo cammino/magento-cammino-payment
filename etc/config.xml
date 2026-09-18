@@ -52,6 +52,14 @@
                     </yourmodule_clear_cc_data>
                 </observers>
             </sales_order_place_after>
+            <sales_order_cancel_after>
+                <observers>
+                    <cammino_payment_notify_gateway_cancel>
+                        <class>Cammino_Payment_Model_Observer</class>
+                        <method>notifyGatewayCancel</method>
+                    </cammino_payment_notify_gateway_cancel>
+                </observers>
+            </sales_order_cancel_after>
             <sales_model_service_quote_submit_failure>
                 <observers>
                     <clear_cc_after_failure>
