@@ -11,6 +11,22 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
     protected $_canOrder  = true;
     protected $_canRefund = true;
     protected $_canRefundInvoicePartial = false;
+    protected $_canCapture = true;
+
+    /**
+     * O cartão já foi cobrado no gateway durante o checkout (_placeOrder),
+     * então não há nada pra cobrar aqui de novo - isso só existe pra permitir
+     * que a fatura fique com estado "Paid" (em vez de "Open"), que é o que o
+     * Magento exige pra liberar o botão de reembolso online na nota de crédito.
+     *
+     * @param Varien_Object $payment
+     * @param float $amount
+     * @return $this
+     */
+    public function capture(Varien_Object $payment, $amount)
+    {
+        return $this;
+    }
 
     /**
      * @param string $paymentAction
