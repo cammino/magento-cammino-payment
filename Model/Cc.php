@@ -19,12 +19,21 @@ class Cammino_Payment_Model_Cc extends Mage_Payment_Model_Method_Abstract
      * que a fatura fique com estado "Paid" (em vez de "Open"), que é o que o
      * Magento exige pra liberar o botão de reembolso online na nota de crédito.
      *
+     * Seta o transaction_id na fatura (com o id real da Appmax, já salvo em
+     * cammino_payment_transaction_id) - sem isso o Magento nunca libera o
+     * botão de reembolso online, mesmo com _canCapture/_canRefund = true.
+     *
      * @param Varien_Object $payment
      * @param float $amount
      * @return $this
      */
     public function capture(Varien_Object $payment, $amount)
     {
+        $transactionId = $payment->getCamminoPaymentTransactionId();
+        if ($transactionId) {
+            $payment->setTransactionId($transactionId);
+            $payment->setIsTransactionClosed(0);
+        }
         return $this;
     }
 
